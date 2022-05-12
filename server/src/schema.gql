@@ -1,0 +1,56 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Log {
+  id: Int!
+  cartridgeId: Int!
+  cartridge: Cartridge!
+  description: String
+  amount: Int!
+  type: CartridgeAction!
+}
+
+enum CartridgeAction {
+  add
+  sub
+}
+
+type Cartridge {
+  id: Int!
+  name: String!
+  amount: Int!
+  info: String
+  logs: [Log!]
+}
+
+type Query {
+  cartridge: [Cartridge!]!
+  logs: [Log!]!
+  log(id: Int!): Log!
+}
+
+type Mutation {
+  createCartridge(createCartridgeInput: CreateCartridgeInput!): Cartridge!
+  createLog(createLogInput: CreateLogInput!): Log!
+  updateLog(updateLogInput: UpdateLogInput!): Log!
+  removeLog(id: Int!): Log!
+}
+
+input CreateCartridgeInput {
+  name: String!
+  amount: Float
+}
+
+input CreateLogInput {
+  description: String
+  amount: Int!
+  type: CartridgeAction!
+}
+
+input UpdateLogInput {
+  description: String
+  amount: Int
+  type: CartridgeAction
+  id: Int!
+}
