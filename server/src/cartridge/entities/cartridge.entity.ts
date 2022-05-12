@@ -21,7 +21,7 @@ export class Cartridge {
   @Field({ nullable: true })
   info?: string;
 
-  @OneToMany(() => Log, (log) => log.cartridge)
+  // @OneToMany(() => Log, (log) => log.cartridgeId)
   @Field((type) => [Log], { nullable: true })
   logs?: Log[];
 }

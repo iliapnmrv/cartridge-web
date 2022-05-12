@@ -20,27 +20,27 @@ registerEnumType(CartridgeAction, {
 @ObjectType()
 export class Log {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column()
-  @Field((type) => Int)
+  @Field(() => Int)
   cartridgeId: number;
 
-  @ManyToOne(() => Cartridge, (cartridge) => cartridge.id)
-  @Field((type) => Cartridge)
-  cartridge: Cartridge;
+  // @ManyToOne(() => Cartridge, (cartridge) => cartridge.id)
+  // @Field(() => Cartridge)
+  // cartridge: Cartridge;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
   description: string;
 
   @Column()
-  @Field((type) => Int)
+  @Field(() => Int)
   amount: number;
 
   @Column({ type: 'enum', enum: ['add', 'sub'], default: 'add' })
-  @Field((type) => CartridgeAction)
+  @Field(() => CartridgeAction)
   type: CartridgeAction;
 
   @CreateDateColumn({

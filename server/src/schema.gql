@@ -5,7 +5,6 @@
 type Log {
   id: Int!
   cartridgeId: Int!
-  cartridge: Cartridge!
   description: String
   amount: Int!
   type: CartridgeAction!
@@ -32,9 +31,9 @@ type Query {
 
 type Mutation {
   createCartridge(createCartridgeInput: CreateCartridgeInput!): Cartridge!
+  updateCartridge(updateCartridgeInput: UpdateCartridgeInput!): Cartridge!
+  removeCartridge(id: Int!): Cartridge!
   createLog(createLogInput: CreateLogInput!): Log!
-  updateLog(updateLogInput: UpdateLogInput!): Log!
-  removeLog(id: Int!): Log!
 }
 
 input CreateCartridgeInput {
@@ -42,15 +41,16 @@ input CreateCartridgeInput {
   amount: Float
 }
 
+input UpdateCartridgeInput {
+  id: Float!
+  name: String
+  description: String
+  amount: Float
+  type: CartridgeAction
+}
+
 input CreateLogInput {
   description: String
   amount: Int!
   type: CartridgeAction!
-}
-
-input UpdateLogInput {
-  description: String
-  amount: Int
-  type: CartridgeAction
-  id: Int!
 }

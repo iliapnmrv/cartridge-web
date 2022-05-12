@@ -22,14 +22,4 @@ export class LogsResolver {
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.logsService.findOne(id);
   }
-
-  @Mutation(() => Log)
-  updateLog(@Args('updateLogInput') updateLogInput: UpdateLogInput) {
-    return this.logsService.update(updateLogInput.id, updateLogInput);
-  }
-
-  @Mutation(() => Log)
-  removeLog(@Args('id', { type: () => Int }) id: number) {
-    return this.logsService.remove(id);
-  }
 }
