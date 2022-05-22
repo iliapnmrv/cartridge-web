@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Log } from 'src/logs/entities/log.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -6,7 +6,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity('cartridges')
 export class Cartridge {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
 
   @Column()
@@ -14,14 +14,14 @@ export class Cartridge {
   name: string;
 
   @Column({ default: 0 })
-  @Field((type) => Int, { defaultValue: 0 })
+  @Field(() => Int, { defaultValue: 0 })
   amount: number;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
   info?: string;
 
-  // @OneToMany(() => Log, (log) => log.cartridgeId)
-  @Field((type) => [Log], { nullable: true })
-  logs?: Log[];
+  @OneToMany(() => Log, (log) => log.cartridge)
+  @Field(() => [Log], { nullable: true })
+  logs: Log[];
 }

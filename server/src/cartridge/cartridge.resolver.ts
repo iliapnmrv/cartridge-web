@@ -17,8 +17,7 @@ import { LogsService } from 'src/logs/logs.service';
 @Resolver((of) => Cartridge)
 export class CartridgeResolver {
   constructor(
-    private сartridgeService: CartridgeService,
-    private logsService: LogsService,
+    private сartridgeService: CartridgeService, // private logsService: LogsService,
   ) {}
 
   @Query(() => [Cartridge])

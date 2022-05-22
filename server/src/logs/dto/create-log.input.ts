@@ -7,9 +7,9 @@ export class CreateLogInput {
   @Field({ nullable: true })
   description: string;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   amount: number;
 
-  @Field((type) => CartridgeAction)
+  @Field(() => CartridgeAction)
   type: CartridgeAction;
 }

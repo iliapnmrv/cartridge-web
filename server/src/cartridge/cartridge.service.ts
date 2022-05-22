@@ -16,7 +16,7 @@ export class CartridgeService {
   ) {}
 
   async findAll(): Promise<Cartridge[]> {
-    return await this.cartridgeRepository.find();
+    return await this.cartridgeRepository.find({ relations: ['logs'] });
   }
 
   async create(createCartridgeInput: CreateCartridgeInput): Promise<Cartridge> {
@@ -26,10 +26,15 @@ export class CartridgeService {
 
   async update(updateCartridgeInput: UpdateCartridgeInput): Promise<Cartridge> {
     const { id, amount, name, description, type } = updateCartridgeInput;
-    const log = this.logRepository.create({
-      cartridgeId: id,
+    const cartridge = await this.cartridgeRepository.findOne(id);
+
+    console.log(updateCartridgeInput);
+
+    const log = await this.logRepository.create({
       amount,
       type,
+      description,
+      cartridge,
     });
 
     await this.logRepository.save(log);
@@ -37,14 +42,14 @@ export class CartridgeService {
     return this.cartridgeRepository.save({
       id,
       name,
-      amount,
+      amount: cartridge.amount - amount,
     });
   }
 
   async remove(cartridgeId: number): Promise<string> {
     try {
       const cartridge = this.cartridgeRepository.delete({ id: cartridgeId });
-      const logs = this.logRepository.delete({ cartridgeId });
+      // const logs = this.logRepository.delete({ cartridgeId });
       return 'Удалено';
     } catch (e) {
       return 'Произошла ошибка';

@@ -12,6 +12,7 @@ export enum CartridgeAction {
   add,
   sub,
 }
+
 registerEnumType(CartridgeAction, {
   name: 'CartridgeAction',
 });
@@ -23,13 +24,9 @@ export class Log {
   @Field(() => Int)
   id: number;
 
-  @Column()
-  @Field(() => Int)
-  cartridgeId: number;
-
-  // @ManyToOne(() => Cartridge, (cartridge) => cartridge.id)
-  // @Field(() => Cartridge)
-  // cartridge: Cartridge;
+  @ManyToOne(() => Cartridge, (cartridge) => cartridge.logs)
+  @Field(() => Cartridge)
+  cartridge: Cartridge;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
@@ -39,7 +36,7 @@ export class Log {
   @Field(() => Int)
   amount: number;
 
-  @Column({ type: 'enum', enum: ['add', 'sub'], default: 'add' })
+  @Column({ type: 'enum', enum: CartridgeAction, default: CartridgeAction.add })
   @Field(() => CartridgeAction)
   type: CartridgeAction;
 
@@ -47,5 +44,6 @@ export class Log {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
+  @Field(() => Date)
   created_at: Date;
 }

@@ -15,6 +15,6 @@ export class UpdateCartridgeInput {
   @Field({ nullable: true })
   amount?: number;
 
-  @Field((type) => CartridgeAction, { nullable: true })
+  @Field(() => CartridgeAction, { nullable: true })
   type?: CartridgeAction;
 }
