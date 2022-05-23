@@ -9,8 +9,9 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import KeyboardControlKeyRoundedIcon from "@mui/icons-material/KeyboardControlKeyRounded";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import Modal from "../components/Modal/Modal";
-import { Button, TextField } from "@mui/material";
+import { Button, Skeleton, TextField } from "@mui/material";
 
 type CartridgesData = {
   cartridge: ICartridge[];
@@ -204,6 +205,9 @@ const Home = () => {
                         <AddOutlinedIcon
                           onClick={() => setAddCartridgeIsOpen(true)}
                         />
+                        <RemoveRoundedIcon
+                          onClick={() => setAddCartridgeIsOpen(true)}
+                        />
                         <DeleteOutlineOutlinedIcon />
                       </div>
                     </td>
@@ -235,7 +239,7 @@ const Home = () => {
                                       index
                                     ) => (
                                       <tr key={id}>
-                                        <td>{index}</td>
+                                        <td>{index + 1}</td>
                                         <td>{description}</td>
                                         <td>
                                           {type === LogTypesEnum.add
@@ -271,7 +275,12 @@ const Home = () => {
       </table>
     </div>
   ) : (
-    <>Loading</>
+    <>
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+      <Skeleton />
+    </>
   );
 };
 

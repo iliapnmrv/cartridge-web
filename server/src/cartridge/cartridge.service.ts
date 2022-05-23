@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Cartridge } from './entities/cartridge.entity';
 import { CreateCartridgeInput } from './dto/create-cartridge.input';
 import { UpdateCartridgeInput } from './dto/update-cartridge.input';
-import { Log } from 'src/logs/entities/log.entity';
+import { CartridgeAction, Log } from 'src/logs/entities/log.entity';
 
 @Injectable()
 export class CartridgeService {
@@ -16,7 +16,10 @@ export class CartridgeService {
   ) {}
 
   async findAll(): Promise<Cartridge[]> {
-    return await this.cartridgeRepository.find({ relations: ['logs'] });
+    return await this.cartridgeRepository.find({
+      relations: { logs: true },
+      order: { logs: { id: 1 } },
+    });
   }
 
   async create(createCartridgeInput: CreateCartridgeInput): Promise<Cartridge> {
@@ -26,14 +29,20 @@ export class CartridgeService {
 
   async update(updateCartridgeInput: UpdateCartridgeInput): Promise<Cartridge> {
     const { id, amount, name, description, type } = updateCartridgeInput;
-    const cartridge = await this.cartridgeRepository.findOne(id);
-
-    console.log(updateCartridgeInput);
+    const cartridge = await this.cartridgeRepository.findOne({ where: { id } });
 
     const log = await this.logRepository.create({
       amount,
       type,
-      description,
+      description: description
+        ? description
+        : type === CartridgeAction.add
+        ? `Поставка ${amount} картриджей ${cartridge.amount}->${
+            cartridge.amount + amount
+          }`
+        : `Списание ${amount} картриджей ${cartridge.amount}->${
+            cartridge.amount - amount
+          }`,
       cartridge,
     });
 
@@ -42,7 +51,10 @@ export class CartridgeService {
     return this.cartridgeRepository.save({
       id,
       name,
-      amount: cartridge.amount - amount,
+      amount:
+        type === CartridgeAction.add
+          ? cartridge.amount + amount
+          : cartridge.amount - amount,
     });
   }
 
