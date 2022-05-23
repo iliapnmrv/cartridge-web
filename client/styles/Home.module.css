@@ -1,4 +1,25 @@
 .container {
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    padding: 0rem 3rem;
+}
+
+.expandable {
+    cursor: pointer;
+    border-radius: 20px;
+    width: 28px;
+    height: 28px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.expandable svg {
+    margin-top: 2px;
+}
+
+.expandable:hover {
+    background-color: #eaeaea;
 }
