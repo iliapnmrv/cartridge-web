@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import type { NextPage } from "next";
 import { useState } from "react";
@@ -11,7 +11,20 @@ import KeyboardControlKeyRoundedIcon from "@mui/icons-material/KeyboardControlKe
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import Modal from "../components/Modal/Modal";
-import { Button, Skeleton, TextField } from "@mui/material";
+import {
+  Button,
+  ButtonGroup,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Skeleton,
+  TextField,
+} from "@mui/material";
+import { periods } from "../constants/index";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import "moment/locale/ru";
+import UpdateCartridgeModal from "../components/Modal/UpdateCartridgeModal";
+moment.locale("ru");
 
 type CartridgesData = {
   cartridge: ICartridge[];
@@ -34,13 +47,20 @@ const AllCartridgesQuery = gql`
   }
 `;
 
+export interface AddCartridgeModal {
+  type: "sub" | "add";
+  id: number;
+}
+
 const Home = () => {
   const { data, loading, error } = useQuery<CartridgesData>(AllCartridgesQuery);
 
-  const [period, setPeriod] = useState<string>("");
+  const [period, setPeriod] = useState<string>("0");
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
 
-  const [addCartridgeIsOpen, setAddCartridgeIsOpen] = useState<boolean>(false);
+  const [addCartridgeModal, setAddCartridgeModal] = useState<AddCartridgeModal>(
+    { type: "add", id: 0 }
+  );
 
   interface IRequestSort {
     (key: string): void;
@@ -61,7 +81,7 @@ const Home = () => {
     sortConfig: ISortConfig;
   } = useSortableData(
     data?.cartridge.length
-      ? data?.cartridge.map(({ name, amount, logs, info }, id) => ({
+      ? data?.cartridge.map(({ id, name, amount, logs, info }) => ({
           id,
           name,
           amount,
@@ -85,44 +105,34 @@ const Home = () => {
     return sortConfig.key === name ? sortConfig.direction : undefined;
   };
 
+  const handlePeriodChange = (event: SelectChangeEvent) => {
+    setPeriod(event.target.value as string);
+  };
+
   return data ? (
     <div className={styles.container}>
+      <h1>Картриджи</h1>
       <div className="filters">
         <button>Добавить картридж</button>
-        <button>Press me</button>
+        <Select
+          id="demo-simple-select"
+          value={period}
+          label="Период"
+          placeholder="Период"
+          onChange={handlePeriodChange}
+        >
+          {periods.map((period, index) => (
+            <MenuItem key={index} value={period.value}>
+              {period.label}
+            </MenuItem>
+          ))}
+        </Select>
       </div>
-      <Modal
-        handleClose={() => {
-          setAddCartridgeIsOpen(false);
-        }}
-        isOpen={addCartridgeIsOpen}
-        title="Добавить картридж"
-      >
-        <p style={{ marginTop: "10px" }}>
-          Укажите количество поступивших картриджей
-        </p>
-        <TextField
-          id="standard-basic"
-          label="Количество картриджей"
-          type="number"
-          variant="standard"
-          autoFocus
-          fullWidth
-          required
-        />
-        <TextField
-          id="standard-basic"
-          label="Примечания"
-          type="number"
-          variant="standard"
-          autoFocus
-          fullWidth
-          style={{ marginTop: "10px" }}
-        />
-        <Button variant="contained" style={{ marginTop: "10px" }}>
-          Добавить
-        </Button>
-      </Modal>
+
+      <UpdateCartridgeModal
+        setAddCartridgeModal={setAddCartridgeModal}
+        addCartridgeModal={addCartridgeModal}
+      />
 
       <table>
         <thead>
@@ -151,9 +161,11 @@ const Home = () => {
           >
             Дата последнего расхода
           </th>
-          <th>Статистика за период (пришло/выдано)</th>
+          <th>
+            Статистика за период <br /> (пришло/выдано)
+          </th>
           <th>Примечания</th>
-          <th>Действия</th>
+          <th align="right">Действия</th>
         </thead>
         <tbody>
           {items.map(
@@ -190,25 +202,53 @@ const Home = () => {
                     <td>{amount}</td>
                     <td>
                       {lastAddition
-                        ? moment(lastAddition).format("LT")
+                        ? moment(lastAddition).format("lll")
                         : "Информация отсутствует"}
                     </td>
                     <td>
                       {lastSubtraction
-                        ? moment(lastSubtraction).format("LT")
+                        ? moment(lastSubtraction).format("lll")
                         : "Информация отсутствует"}
                     </td>
-                    <td>-</td>
+                    <td>
+                      {logs?.reduce(
+                        (sum, log) =>
+                          log.type === "add" ? (sum += log.amount) : (sum += 0),
+                        0
+                      )}{" "}
+                      /{" "}
+                      {logs?.reduce(
+                        (sum, log) =>
+                          log.type === "sub" ? (sum += log.amount) : (sum += 0),
+                        0
+                      )}
+                    </td>
                     <td>{info}</td>
                     <td>
                       <div className="actions">
-                        <AddOutlinedIcon
-                          onClick={() => setAddCartridgeIsOpen(true)}
-                        />
-                        <RemoveRoundedIcon
-                          onClick={() => setAddCartridgeIsOpen(true)}
-                        />
-                        <DeleteOutlineOutlinedIcon />
+                        <ButtonGroup
+                          size="small"
+                          variant="text"
+                          aria-label="text button group"
+                        >
+                          <Button>
+                            <AddOutlinedIcon
+                              onClick={() =>
+                                setAddCartridgeModal({ type: "add", id })
+                              }
+                            />
+                          </Button>
+                          <Button>
+                            <RemoveRoundedIcon
+                              onClick={() =>
+                                setAddCartridgeModal({ type: "sub", id })
+                              }
+                            />
+                          </Button>
+                          <Button>
+                            <DeleteOutlineOutlinedIcon color="error" />
+                          </Button>
+                        </ButtonGroup>
                       </div>
                     </td>
                   </tr>
@@ -248,7 +288,7 @@ const Home = () => {
                                           {amount}
                                         </td>
                                         <td>
-                                          {moment(created_at).format("LT")}
+                                          {moment(created_at).format("lll")}
                                         </td>
                                       </tr>
                                     )

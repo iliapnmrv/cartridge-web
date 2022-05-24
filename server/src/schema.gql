@@ -50,6 +50,7 @@ input CreateCartridgeInput {
 input UpdateCartridgeInput {
   id: Float!
   name: String
+  info: String
   description: String
   amount: Float
   type: CartridgeAction

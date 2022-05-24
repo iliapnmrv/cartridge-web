@@ -3,7 +3,7 @@ export interface IPeriod {
   label: string;
 }
 
-export const Periods: IPeriod[] = [
+export const periods: IPeriod[] = [
   {
     value: 30,
     label: "1 месяц",
@@ -19,5 +19,9 @@ export const Periods: IPeriod[] = [
   {
     value: 366,
     label: "С начала года",
+  },
+  {
+    value: 0,
+    label: "Все время",
   },
 ];

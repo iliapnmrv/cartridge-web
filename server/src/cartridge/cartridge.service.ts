@@ -18,7 +18,7 @@ export class CartridgeService {
   async findAll(): Promise<Cartridge[]> {
     return await this.cartridgeRepository.find({
       relations: { logs: true },
-      order: { logs: { id: 1 } },
+      order: { id: 1, logs: { id: 1 } },
     });
   }
 
