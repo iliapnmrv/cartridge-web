@@ -16,12 +16,12 @@ export const periods: IPeriod[] = [
     value: 365,
     label: "1 год",
   },
+  // {
+  //   value: 366,
+  //   label: "С начала года",
+  // },
   {
-    value: 366,
-    label: "С начала года",
-  },
-  {
-    value: 0,
+    value: 9999,
     label: "Все время",
   },
 ];

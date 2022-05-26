@@ -28,34 +28,55 @@ export class CartridgeService {
   }
 
   async update(updateCartridgeInput: UpdateCartridgeInput): Promise<Cartridge> {
-    const { id, amount, name, description, type } = updateCartridgeInput;
+    const { id, amount, name, description, type, info } = updateCartridgeInput;
     const cartridge = await this.cartridgeRepository.findOne({ where: { id } });
+    console.log(id, amount, name, description, type, info);
 
-    const log = await this.logRepository.create({
-      amount,
-      type,
-      description: description
-        ? description
-        : type === CartridgeAction.add
-        ? `Поставка ${amount} картриджей ${cartridge.amount}->${
-            cartridge.amount + amount
-          }`
-        : `Списание ${amount} картриджей ${cartridge.amount}->${
-            cartridge.amount - amount
-          }`,
-      cartridge,
-    });
-
-    await this.logRepository.save(log);
-
-    return this.cartridgeRepository.save({
-      id,
-      name,
-      amount:
-        type === CartridgeAction.add
-          ? cartridge.amount + amount
-          : cartridge.amount - amount,
-    });
+    if (amount && type !== undefined) {
+      const log = await this.logRepository.create({
+        amount,
+        type,
+        description: description
+          ? description
+          : type === CartridgeAction.add
+          ? `Поставка ${amount} картриджей ${cartridge.amount}->${
+              cartridge.amount + amount
+            }`
+          : `Списание ${amount} картриджей ${cartridge.amount}->${
+              cartridge.amount - amount
+            }`,
+        cartridge,
+      });
+      await this.logRepository.save(log);
+      return this.cartridgeRepository.save({
+        id,
+        amount:
+          type === CartridgeAction.add
+            ? cartridge.amount + amount
+            : cartridge.amount - amount,
+      });
+    }
+    if (info !== undefined) {
+      return this.cartridgeRepository.save({
+        ...cartridge,
+        id,
+        info,
+      });
+    }
+    if (name !== undefined) {
+      return this.cartridgeRepository.save({
+        ...cartridge,
+        id,
+        name,
+      });
+    }
+    if (amount !== undefined) {
+      return this.cartridgeRepository.save({
+        ...cartridge,
+        id,
+        amount,
+      });
+    }
   }
 
   async remove(cartridgeId: number): Promise<string> {

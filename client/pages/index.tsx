@@ -1,7 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import type { NextPage } from "next";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { ISortConfig, useSortableData } from "../hooks/useSortable";
 import styles from "../styles/Home.module.css";
 import { ICartridge, LogTypesEnum } from "../types/cartridge";
@@ -24,6 +24,7 @@ import { periods } from "../constants/index";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import "moment/locale/ru";
 import UpdateCartridgeModal from "../components/Modal/UpdateCartridgeModal";
+import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 moment.locale("ru");
 
 type CartridgesData = {
@@ -36,6 +37,7 @@ const AllCartridgesQuery = gql`
       id
       amount
       name
+      info
       logs {
         id
         description
@@ -47,15 +49,71 @@ const AllCartridgesQuery = gql`
   }
 `;
 
+const UpdateCartridgeMutation = gql`
+  mutation updateCartridge(
+    $id: Float!
+    $name: String
+    $info: String
+    $amount: Float
+  ) {
+    updateCartridge(
+      updateCartridgeInput: {
+        id: $id
+        name: $name
+        info: $info
+        amount: $amount
+      }
+    ) {
+      id
+      name
+      info
+      amount
+    }
+  }
+`;
+
 export interface AddCartridgeModal {
   type: "sub" | "add";
   id: number;
 }
 
+export interface EditableField {
+  id: number;
+  fieldName: string;
+  value: string | number | undefined;
+}
+
 const Home = () => {
   const { data, loading, error } = useQuery<CartridgesData>(AllCartridgesQuery);
+  const [
+    updateCartridges,
+    { data: updateResponseData, loading: updateLoading, error: updateError },
+  ] = useMutation(UpdateCartridgeMutation);
 
-  const [period, setPeriod] = useState<string>("0");
+  console.log(updateResponseData);
+
+  const updateCartridgesData = () => {
+    updateCartridges({
+      variables: {
+        id: editableField.id,
+        [editableField.fieldName]: editableField.value
+          ? editableField.value
+          : "",
+      },
+    });
+    setEditableField({
+      id: 0,
+      fieldName: "",
+      value: "",
+    });
+  };
+
+  const [period, setPeriod] = useState<string>("9999");
+  const [editableField, setEditableField] = useState<EditableField>({
+    id: 0,
+    fieldName: "",
+    value: "",
+  });
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
 
   const [addCartridgeModal, setAddCartridgeModal] = useState<AddCartridgeModal>(
@@ -93,7 +151,9 @@ const Home = () => {
           )?.[logs?.filter((log) => log.type === LogTypesEnum.sub).length - 1]
             ?.created_at,
           info,
-          logs,
+          logs: logs?.filter(({ created_at }) =>
+            moment(created_at).isAfter(moment().subtract(period, "day"), "day")
+          ),
         }))
       : []
   );
@@ -112,21 +172,21 @@ const Home = () => {
   return data ? (
     <div className={styles.container}>
       <h1>Картриджи</h1>
-      <div className="filters">
+      <div className={styles.filters}>
         <button>Добавить картридж</button>
-        <Select
-          id="demo-simple-select"
+        <TextField
           value={period}
           label="Период"
+          select
           placeholder="Период"
-          onChange={handlePeriodChange}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handlePeriodChange(e)}
         >
           {periods.map((period, index) => (
             <MenuItem key={index} value={period.value}>
               {period.label}
             </MenuItem>
           ))}
-        </Select>
+        </TextField>
       </div>
 
       <UpdateCartridgeModal
@@ -136,14 +196,17 @@ const Home = () => {
 
       <table>
         <thead>
+          {/* Ячейка для стрелки */}
           <th></th>
           <th
+            style={{ wordWrap: "break-word", maxWidth: "250px" }}
             onClick={() => requestSort("name")}
             className={getClassNamesFor("name")}
           >
             Наименование
           </th>
           <th
+            style={{ wordWrap: "break-word", maxWidth: "250px" }}
             onClick={() => requestSort("amount")}
             className={getClassNamesFor("amount")}
           >
@@ -164,7 +227,9 @@ const Home = () => {
           <th>
             Статистика за период <br /> (пришло/выдано)
           </th>
-          <th>Примечания</th>
+          <th style={{ wordWrap: "break-word", maxWidth: "250px" }}>
+            Примечания
+          </th>
           <th align="right">Действия</th>
         </thead>
         <tbody>
@@ -198,8 +263,112 @@ const Home = () => {
                         )}
                       </span>
                     </td>
-                    <td>{name}</td>
-                    <td>{amount}</td>
+                    <td
+                      style={{ wordWrap: "break-word", maxWidth: "250px" }}
+                      onDoubleClick={() =>
+                        setEditableField({ fieldName: "name", id, value: name })
+                      }
+                    >
+                      <div
+                        style={{
+                          maxWidth: "220px",
+                          height: "50px",
+                          overflow: "auto",
+                        }}
+                      >
+                        {editableField.id === id &&
+                        editableField.fieldName === "name" ? (
+                          <TextField
+                            id="name"
+                            type="text"
+                            multiline
+                            rows={2}
+                            maxRows={4}
+                            variant="outlined"
+                            fullWidth
+                            size="small"
+                            value={editableField.value}
+                            onChange={(e) =>
+                              setEditableField((prevValue) => ({
+                                ...prevValue,
+                                value: e.target.value,
+                              }))
+                            }
+                            InputProps={{
+                              style: {
+                                padding: "1.5px 9px",
+                              },
+                              endAdornment: (
+                                <DoneRoundedIcon
+                                  fontSize="large"
+                                  className={styles.expandable}
+                                  onClick={() => {
+                                    updateCartridgesData();
+                                  }}
+                                />
+                              ),
+                            }}
+                          />
+                        ) : (
+                          name
+                        )}
+                      </div>
+                    </td>
+                    <td
+                      style={{ wordWrap: "break-word", maxWidth: "250px" }}
+                      onDoubleClick={() =>
+                        setEditableField({
+                          fieldName: "amount",
+                          id,
+                          value: amount,
+                        })
+                      }
+                    >
+                      <div
+                        style={{
+                          maxWidth: "220px",
+                          height: "50px",
+                          overflow: "auto",
+                        }}
+                      >
+                        {editableField.id === id &&
+                        editableField.fieldName === "amount" ? (
+                          <TextField
+                            id="name"
+                            type="number"
+                            multiline
+                            rows={2}
+                            maxRows={4}
+                            variant="outlined"
+                            fullWidth
+                            size="small"
+                            value={editableField.value}
+                            onChange={(e) =>
+                              setEditableField((prevValue) => ({
+                                ...prevValue,
+                                value: +e.target.value,
+                              }))
+                            }
+                            InputProps={{
+                              style: {
+                                padding: "1.5px 9px",
+                              },
+                              endAdornment: (
+                                <DoneRoundedIcon
+                                  fontSize="large"
+                                  className={styles.expandable}
+                                  onClick={() => {
+                                    updateCartridgesData();
+                                  }}
+                                />
+                              ),
+                            }}
+                          />
+                        ) : (
+                          amount
+                        )}
+                      </div>
+                    </td>
                     <td>
                       {lastAddition
                         ? moment(lastAddition).format("lll")
@@ -223,7 +392,57 @@ const Home = () => {
                         0
                       )}
                     </td>
-                    <td>{info}</td>
+                    <td
+                      style={{ wordWrap: "break-word", maxWidth: "250px" }}
+                      onDoubleClick={() =>
+                        setEditableField({ fieldName: "info", id, value: info })
+                      }
+                    >
+                      <div
+                        style={{
+                          maxWidth: "220px",
+                          height: "50px",
+                          overflow: "auto",
+                        }}
+                      >
+                        {editableField.id === id &&
+                        editableField.fieldName === "info" ? (
+                          <TextField
+                            id="info"
+                            type="text"
+                            multiline
+                            rows={2}
+                            maxRows={4}
+                            variant="outlined"
+                            fullWidth
+                            size="small"
+                            value={editableField.value}
+                            onChange={(e) =>
+                              setEditableField((prevValue) => ({
+                                ...prevValue,
+                                value: e.target.value,
+                              }))
+                            }
+                            InputProps={{
+                              style: {
+                                padding: "1.5px 9px",
+                              },
+                              endAdornment: (
+                                <DoneRoundedIcon
+                                  fontSize="large"
+                                  className={styles.expandable}
+                                  onClick={() => {
+                                    updateCartridgesData();
+                                  }}
+                                />
+                              ),
+                            }}
+                          />
+                        ) : (
+                          info
+                        )}
+                      </div>
+                    </td>
                     <td>
                       <div className="actions">
                         <ButtonGroup

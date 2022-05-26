@@ -10,7 +10,7 @@
     border-radius: 20px;
     width: 28px;
     height: 28px;
-    padding: 10px;
+    padding: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,4 +22,12 @@
 
 .expandable:hover {
     background-color: #eaeaea;
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
