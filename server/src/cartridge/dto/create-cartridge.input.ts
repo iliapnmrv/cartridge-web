@@ -5,6 +5,9 @@ export class CreateCartridgeInput {
   @Field()
   name: string;
 
+  @Field()
+  amount: number;
+
   @Field({ nullable: true })
-  amount?: number;
+  info?: string;
 }

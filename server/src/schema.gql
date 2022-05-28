@@ -44,7 +44,8 @@ type Mutation {
 
 input CreateCartridgeInput {
   name: String!
-  amount: Float
+  amount: Float!
+  info: String
 }
 
 input UpdateCartridgeInput {

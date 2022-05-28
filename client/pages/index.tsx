@@ -1,6 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
-import type { NextPage } from "next";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { ISortConfig, useSortableData } from "../hooks/useSortable";
 import styles from "../styles/Home.module.css";
@@ -10,7 +9,6 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import KeyboardControlKeyRoundedIcon from "@mui/icons-material/KeyboardControlKeyRounded";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
-import Modal from "../components/Modal/Modal";
 import {
   Button,
   ButtonGroup,
@@ -21,10 +19,10 @@ import {
   TextField,
 } from "@mui/material";
 import { periods } from "../constants/index";
-import { Field, Form, Formik, FormikHelpers } from "formik";
 import "moment/locale/ru";
 import UpdateCartridgeModal from "../components/Modal/UpdateCartridgeModal";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
+import CreateCartridgeModal from "../components/Modal/CreateCartridgeModal";
 moment.locale("ru");
 
 type CartridgesData = {
@@ -90,8 +88,6 @@ const Home = () => {
     { data: updateResponseData, loading: updateLoading, error: updateError },
   ] = useMutation(UpdateCartridgeMutation);
 
-  console.log(updateResponseData);
-
   const updateCartridgesData = () => {
     updateCartridges({
       variables: {
@@ -108,6 +104,7 @@ const Home = () => {
     });
   };
 
+  const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
   const [period, setPeriod] = useState<string>("9999");
   const [editableField, setEditableField] = useState<EditableField>({
     id: 0,
@@ -173,7 +170,14 @@ const Home = () => {
     <div className={styles.container}>
       <h1>Картриджи</h1>
       <div className={styles.filters}>
-        <button>Добавить картридж</button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setCreateModalVisible(true);
+          }}
+        >
+          Добавить картридж
+        </Button>
         <TextField
           value={period}
           label="Период"
@@ -194,6 +198,11 @@ const Home = () => {
         addCartridgeModal={addCartridgeModal}
       />
 
+      <CreateCartridgeModal
+        createModalVisible={createModalVisible}
+        setCreateModalVisible={setCreateModalVisible}
+      />
+
       <table>
         <thead>
           {/* Ячейка для стрелки */}
@@ -206,7 +215,7 @@ const Home = () => {
             Наименование
           </th>
           <th
-            style={{ wordWrap: "break-word", maxWidth: "250px" }}
+            style={{ wordWrap: "break-word", maxWidth: "100px" }}
             onClick={() => requestSort("amount")}
             className={getClassNamesFor("amount")}
           >
@@ -315,7 +324,7 @@ const Home = () => {
                       </div>
                     </td>
                     <td
-                      style={{ wordWrap: "break-word", maxWidth: "250px" }}
+                      style={{ wordWrap: "break-word", maxWidth: "100px" }}
                       onDoubleClick={() =>
                         setEditableField({
                           fieldName: "amount",
