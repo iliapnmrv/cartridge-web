@@ -38,7 +38,7 @@ type Query {
 type Mutation {
   createCartridge(createCartridgeInput: CreateCartridgeInput!): Cartridge!
   updateCartridge(updateCartridgeInput: UpdateCartridgeInput!): Cartridge!
-  removeCartridge(id: Int!): Cartridge!
+  removeCartridge(id: Int!): String!
   createLog(createLogInput: CreateLogInput!): Log!
 }
 

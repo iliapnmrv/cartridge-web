@@ -1,6 +1,8 @@
 import { gql, useMutation } from "@apollo/client";
 import { Button, TextField } from "@mui/material";
 import { Form, Formik } from "formik";
+import { UpdateCartridgeMutation } from "lib/Mutations";
+import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
 import { AddCartridgeModal } from "pages";
 import React, { Dispatch } from "react";
 import Modal from "./Modal";
@@ -14,27 +16,6 @@ interface AddCartridges {
   amount: number;
   description: string;
 }
-
-const UpdateCartridgeMutation = gql`
-  mutation updateCartridge(
-    $id: Float!
-    $amount: Float!
-    $type: CartridgeAction!
-    $description: String
-  ) {
-    updateCartridge(
-      updateCartridgeInput: {
-        id: $id
-        amount: $amount
-        type: $type
-        description: $description
-      }
-    ) {
-      id
-      amount
-    }
-  }
-`;
 
 const UpdateCartridgeModal = ({
   addCartridgeModal,

@@ -24,6 +24,9 @@ export class Log {
   @Field(() => Int)
   id: number;
 
+  @Column()
+  cartridgeId: number;
+
   @ManyToOne(() => Cartridge, (cartridge) => cartridge.logs)
   @Field(() => Cartridge)
   cartridge: Cartridge;

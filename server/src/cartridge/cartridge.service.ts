@@ -82,10 +82,10 @@ export class CartridgeService {
   async remove(cartridgeId: number): Promise<string> {
     try {
       const cartridge = this.cartridgeRepository.delete({ id: cartridgeId });
-      // const logs = this.logRepository.delete({ cartridgeId });
+      const logs = this.logRepository.delete({ cartridgeId });
       return 'Удалено';
     } catch (e) {
-      return 'Произошла ошибка';
+      return e;
     }
   }
 }

@@ -1,8 +1,10 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { Button, TextField } from "@mui/material";
 import { Form, Formik } from "formik";
+import { CreateCartridgeMutation } from "lib/Mutations";
 import { AddCartridgeModal } from "pages";
-import React, { Dispatch } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
+import { ICartridge } from "../../types/cartridge";
 import Modal from "./Modal";
 
 type Props = {
@@ -16,27 +18,42 @@ interface CreateCartridges {
   info: string;
 }
 
-const UpdateCartridgeMutation = gql`
-  mutation createCartridge($name: String!, $amount: Float!, $info: String) {
-    createCartridge(
-      createCartridgeInput: { name: $name, amount: $amount, info: $info }
-    ) {
-      id
-      amount
-      name
-      info
-    }
-  }
-`;
-
 const CreateCartridgeModal = ({
   createModalVisible,
   setCreateModalVisible,
 }: Props) => {
   const [
     createCartridge,
-    { data: updateResponseData, loading: updateLoading, error: updateError },
-  ] = useMutation(UpdateCartridgeMutation);
+    { data: createResponseData, loading: createLoading, error: createError },
+  ] = useMutation(CreateCartridgeMutation, {
+    update(cache, { data: { createCartridge } }) {
+      cache.modify({
+        fields: {
+          cartridge(existingCartridges = []) {
+            const newCartridgeRef = cache.writeFragment({
+              data: createCartridge,
+              fragment: gql`
+                fragment NewCartridge on Cartridge {
+                  id
+                  amount
+                  name
+                  info
+                  logs {
+                    id
+                    description
+                    amount
+                    created_at
+                    type
+                  }
+                }
+              `,
+            });
+            return [...existingCartridges, newCartridgeRef];
+          },
+        },
+      });
+    },
+  });
 
   return (
     <Modal

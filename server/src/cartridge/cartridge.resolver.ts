@@ -1,5 +1,6 @@
 import {
   Args,
+  Float,
   Int,
   Mutation,
   Parent,
@@ -25,12 +26,6 @@ export class CartridgeResolver {
     return this.сartridgeService.findAll();
   }
 
-  // @ResolveField(() => [Log])
-  // logs(@Parent() cartridge: Cartridge): Promise<Cartridge[]> {
-  //   const { id } = cartridge;
-  //   return this.logsService.findAll();
-  // }
-
   @Mutation(() => Cartridge)
   createCartridge(
     @Args('createCartridgeInput')
@@ -46,7 +41,7 @@ export class CartridgeResolver {
     return this.сartridgeService.update(updateCartridgeInput);
   }
 
-  @Mutation(() => Cartridge)
+  @Mutation(() => String)
   removeCartridge(@Args('id', { type: () => Int }) id: number) {
     return this.сartridgeService.remove(id);
   }

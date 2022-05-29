@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { ISortConfig, useSortableData } from "../hooks/useSortable";
 import styles from "../styles/Home.module.css";
 import { ICartridge, LogTypesEnum } from "../types/cartridge";
@@ -12,8 +12,8 @@ import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import {
   Button,
   ButtonGroup,
+  Checkbox,
   MenuItem,
-  Select,
   SelectChangeEvent,
   Skeleton,
   TextField,
@@ -23,55 +23,17 @@ import "moment/locale/ru";
 import UpdateCartridgeModal from "../components/Modal/UpdateCartridgeModal";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import CreateCartridgeModal from "../components/Modal/CreateCartridgeModal";
+import DeleteCartridgeModal from "../components/Modal/DeleteCartridgeModal";
+import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
+import { UpdateCartridgeAmountMutation } from "lib/Mutations";
 moment.locale("ru");
-
-type CartridgesData = {
-  cartridge: ICartridge[];
-};
-
-const AllCartridgesQuery = gql`
-  query {
-    cartridge {
-      id
-      amount
-      name
-      info
-      logs {
-        id
-        description
-        amount
-        created_at
-        type
-      }
-    }
-  }
-`;
-
-const UpdateCartridgeMutation = gql`
-  mutation updateCartridge(
-    $id: Float!
-    $name: String
-    $info: String
-    $amount: Float
-  ) {
-    updateCartridge(
-      updateCartridgeInput: {
-        id: $id
-        name: $name
-        info: $info
-        amount: $amount
-      }
-    ) {
-      id
-      name
-      info
-      amount
-    }
-  }
-`;
 
 export interface AddCartridgeModal {
   type: "sub" | "add";
+  id: number;
+}
+export interface DeleteCartridgeModal {
+  name: string;
   id: number;
 }
 
@@ -82,11 +44,12 @@ export interface EditableField {
 }
 
 const Home = () => {
-  const { data, loading, error } = useQuery<CartridgesData>(AllCartridgesQuery);
+  const { data, loading, error, refetch } =
+    useQuery<CartridgesData>(AllCartridgesQuery);
   const [
     updateCartridges,
     { data: updateResponseData, loading: updateLoading, error: updateError },
-  ] = useMutation(UpdateCartridgeMutation);
+  ] = useMutation(UpdateCartridgeAmountMutation);
 
   const updateCartridgesData = () => {
     updateCartridges({
@@ -105,6 +68,8 @@ const Home = () => {
   };
 
   const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
+  const [deleteCartridgeModal, setDeleteCartridgeModal] =
+    useState<DeleteCartridgeModal>({ id: 0, name: "" });
   const [period, setPeriod] = useState<string>("9999");
   const [editableField, setEditableField] = useState<EditableField>({
     id: 0,
@@ -112,6 +77,7 @@ const Home = () => {
     value: "",
   });
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
+  const [rowsSelected, setRowsSelected] = useState<number[]>([]);
 
   const [addCartridgeModal, setAddCartridgeModal] = useState<AddCartridgeModal>(
     { type: "add", id: 0 }
@@ -166,7 +132,9 @@ const Home = () => {
     setPeriod(event.target.value as string);
   };
 
-  return data ? (
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
+  return !loading ? (
     <div className={styles.container}>
       <h1>Картриджи</h1>
       <div className={styles.filters}>
@@ -203,8 +171,26 @@ const Home = () => {
         setCreateModalVisible={setCreateModalVisible}
       />
 
+      <DeleteCartridgeModal
+        deleteCartridgeModal={deleteCartridgeModal}
+        setDeleteCartridgeModal={setDeleteCartridgeModal}
+      />
+
       <table>
         <thead>
+          <th>
+            <Checkbox
+              {...label}
+              checked={rowsSelected.length === data?.cartridge.length}
+              onChange={(e) =>
+                setRowsSelected(
+                  rowsSelected.length === data?.cartridge.length
+                    ? []
+                    : items.map((item) => item.id)
+                )
+              }
+            />
+          </th>
           {/* Ячейка для стрелки */}
           <th></th>
           <th
@@ -255,6 +241,19 @@ const Home = () => {
               return (
                 <>
                   <tr key={id}>
+                    <td>
+                      <Checkbox
+                        {...label}
+                        checked={rowsSelected.includes(id)}
+                        onChange={(e) =>
+                          rowsSelected.includes(id)
+                            ? setRowsSelected((rows) =>
+                                rows.filter((row) => row !== id)
+                              )
+                            : setRowsSelected((rows) => [...rows, id])
+                        }
+                      />
+                    </td>
                     <td
                       onClick={() =>
                         setRowsExpanded((prevValue) =>
@@ -474,7 +473,12 @@ const Home = () => {
                             />
                           </Button>
                           <Button>
-                            <DeleteOutlineOutlinedIcon color="error" />
+                            <DeleteOutlineOutlinedIcon
+                              color="error"
+                              onClick={() =>
+                                setDeleteCartridgeModal({ id, name })
+                              }
+                            />
                           </Button>
                         </ButtonGroup>
                       </div>
@@ -485,7 +489,7 @@ const Home = () => {
                       {logs?.length ? (
                         <>
                           <tr key={id} className="noHover">
-                            <td colSpan={8}>
+                            <td colSpan={9}>
                               <h3>История</h3>
                               <table>
                                 <thead>
@@ -528,7 +532,7 @@ const Home = () => {
                         </>
                       ) : (
                         <tr key={id} className="noHover">
-                          <td colSpan={8}>
+                          <td colSpan={9}>
                             <h3>История отсутствует</h3>
                           </td>
                         </tr>
