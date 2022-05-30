@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Cartridge } from './entities/cartridge.entity';
 import { CreateCartridgeInput } from './dto/create-cartridge.input';
 import { UpdateCartridgeInput } from './dto/update-cartridge.input';
@@ -17,6 +17,22 @@ export class CartridgeService {
 
   async findAll(): Promise<Cartridge[]> {
     return await this.cartridgeRepository.find({
+      relations: { logs: true },
+      order: { id: 1, logs: { id: 1 } },
+    });
+  }
+
+  async findByName(name: string): Promise<Cartridge> {
+    return await this.cartridgeRepository.findOne({
+      where: { name },
+      relations: { logs: true },
+      order: { id: 1, logs: { id: 1 } },
+    });
+  }
+
+  async search(field: string): Promise<Cartridge[]> {
+    return await this.cartridgeRepository.find({
+      where: [{ name: Like(`%${field}%`) }, { info: Like(`%${field}%`) }],
       relations: { logs: true },
       order: { id: 1, logs: { id: 1 } },
     });

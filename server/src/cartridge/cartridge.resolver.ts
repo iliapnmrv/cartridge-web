@@ -26,6 +26,20 @@ export class CartridgeResolver {
     return this.сartridgeService.findAll();
   }
 
+  @Query(() => Cartridge)
+  findByName(
+    @Args('id', { type: () => String }) name: string,
+  ): Promise<Cartridge> {
+    return this.сartridgeService.findByName(name);
+  }
+
+  @Mutation(() => [Cartridge])
+  searchCartridges(
+    @Args('id', { type: () => String }) field: string,
+  ): Promise<Cartridge[]> {
+    return this.сartridgeService.search(field);
+  }
+
   @Mutation(() => Cartridge)
   createCartridge(
     @Args('createCartridgeInput')
