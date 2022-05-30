@@ -43,6 +43,13 @@ export const UpdateCartridgeAmountMutation = gql`
     ) {
       id
       amount
+      logs {
+        id
+        description
+        amount
+        created_at
+        type
+      }
     }
   }
 `;

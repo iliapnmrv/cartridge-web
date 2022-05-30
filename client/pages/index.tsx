@@ -25,7 +25,10 @@ import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import CreateCartridgeModal from "../components/Modal/CreateCartridgeModal";
 import DeleteCartridgeModal from "../components/Modal/DeleteCartridgeModal";
 import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
-import { UpdateCartridgeAmountMutation } from "lib/Mutations";
+import {
+  UpdateCartridgeAmountMutation,
+  UpdateCartridgeMutation,
+} from "lib/Mutations";
 moment.locale("ru");
 
 export interface AddCartridgeModal {
@@ -43,13 +46,18 @@ export interface EditableField {
   value: string | number | undefined;
 }
 
+export interface IRowsSelected {
+  id: number;
+  value: string | number | undefined;
+}
+
 const Home = () => {
   const { data, loading, error, refetch } =
     useQuery<CartridgesData>(AllCartridgesQuery);
   const [
     updateCartridges,
     { data: updateResponseData, loading: updateLoading, error: updateError },
-  ] = useMutation(UpdateCartridgeAmountMutation);
+  ] = useMutation(UpdateCartridgeMutation);
 
   const updateCartridgesData = () => {
     updateCartridges({
@@ -77,7 +85,7 @@ const Home = () => {
     value: "",
   });
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
-  const [rowsSelected, setRowsSelected] = useState<number[]>([]);
+  const [rowsSelected, setRowsSelected] = useState<IRowsSelected[]>([]);
 
   const [addCartridgeModal, setAddCartridgeModal] = useState<AddCartridgeModal>(
     { type: "add", id: 0 }
@@ -132,6 +140,8 @@ const Home = () => {
     setPeriod(event.target.value as string);
   };
 
+  console.log(rowsSelected);
+
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   return !loading ? (
@@ -178,54 +188,59 @@ const Home = () => {
 
       <table>
         <thead>
-          <th>
-            <Checkbox
-              {...label}
-              checked={rowsSelected.length === data?.cartridge.length}
-              onChange={(e) =>
-                setRowsSelected(
-                  rowsSelected.length === data?.cartridge.length
-                    ? []
-                    : items.map((item) => item.id)
-                )
-              }
-            />
-          </th>
-          {/* Ячейка для стрелки */}
-          <th></th>
-          <th
-            style={{ wordWrap: "break-word", maxWidth: "250px" }}
-            onClick={() => requestSort("name")}
-            className={getClassNamesFor("name")}
-          >
-            Наименование
-          </th>
-          <th
-            style={{ wordWrap: "break-word", maxWidth: "100px" }}
-            onClick={() => requestSort("amount")}
-            className={getClassNamesFor("amount")}
-          >
-            Количество
-          </th>
-          <th
-            onClick={() => requestSort("lastAddition")}
-            className={getClassNamesFor("lastAddition")}
-          >
-            Дата последней поставки
-          </th>
-          <th
-            onClick={() => requestSort("lastSubtraction")}
-            className={getClassNamesFor("lastSubtraction")}
-          >
-            Дата последнего расхода
-          </th>
-          <th>
-            Статистика за период <br /> (пришло/выдано)
-          </th>
-          <th style={{ wordWrap: "break-word", maxWidth: "250px" }}>
-            Примечания
-          </th>
-          <th align="right">Действия</th>
+          {/* <tr>
+          <td colSpan={9}></td>
+          </tr> */}
+          <tr>
+            <th>
+              <Checkbox
+                {...label}
+                checked={rowsSelected.length === data?.cartridge.length}
+                onChange={(e) =>
+                  setRowsSelected(
+                    rowsSelected.length === data?.cartridge.length
+                      ? []
+                      : items.map((item) => ({ id: item.id, value: 0 }))
+                  )
+                }
+              />
+            </th>
+            {/* Ячейка для стрелки */}
+            <th></th>
+            <th
+              style={{ wordWrap: "break-word", maxWidth: "250px" }}
+              onClick={() => requestSort("name")}
+              className={getClassNamesFor("name")}
+            >
+              Наименование
+            </th>
+            <th
+              style={{ wordWrap: "break-word", maxWidth: "100px" }}
+              onClick={() => requestSort("amount")}
+              className={getClassNamesFor("amount")}
+            >
+              Количество
+            </th>
+            <th
+              onClick={() => requestSort("lastAddition")}
+              className={getClassNamesFor("lastAddition")}
+            >
+              Дата последней поставки
+            </th>
+            <th
+              onClick={() => requestSort("lastSubtraction")}
+              className={getClassNamesFor("lastSubtraction")}
+            >
+              Дата последнего расхода
+            </th>
+            <th>
+              Статистика за период <br /> (пришло/выдано)
+            </th>
+            <th style={{ wordWrap: "break-word", maxWidth: "250px" }}>
+              Примечания
+            </th>
+            <th align="right">Действия</th>
+          </tr>
         </thead>
         <tbody>
           {items.map(
@@ -244,33 +259,77 @@ const Home = () => {
                     <td>
                       <Checkbox
                         {...label}
-                        checked={rowsSelected.includes(id)}
+                        checked={rowsSelected.some((row) => row.id === id)}
                         onChange={(e) =>
-                          rowsSelected.includes(id)
+                          rowsSelected.some((row) => row.id === id)
                             ? setRowsSelected((rows) =>
-                                rows.filter((row) => row !== id)
+                                rows.filter((row) => row.id !== id)
                               )
-                            : setRowsSelected((rows) => [...rows, id])
+                            : setRowsSelected((rows) => [
+                                ...rows,
+                                { id, value: 0 },
+                              ])
                         }
                       />
                     </td>
-                    <td
-                      onClick={() =>
-                        setRowsExpanded((prevValue) =>
-                          prevValue.includes(id)
-                            ? prevValue.filter((row) => row !== id)
-                            : [...prevValue, id]
-                        )
-                      }
-                    >
-                      <span className={styles.expandable}>
-                        {rowsExpanded.includes(id) ? (
-                          <KeyboardControlKeyRoundedIcon />
-                        ) : (
-                          <KeyboardArrowDownRoundedIcon />
-                        )}
-                      </span>
-                    </td>
+                    {rowsSelected.some((row) => row.id === id) ? (
+                      <td
+                        style={{
+                          wordWrap: "break-word",
+                          maxWidth: "42px",
+                          padding: "7px 0px",
+                        }}
+                      >
+                        <TextField
+                          id="name"
+                          type="number"
+                          variant="outlined"
+                          fullWidth
+                          autoFocus
+                          autoComplete="off"
+                          size="small"
+                          inputProps={{
+                            style: {
+                              padding: "10px 5px",
+                            },
+                          }}
+                          value={
+                            rowsSelected.filter((row) => row.id === id)[0].value
+                          }
+                          onChange={(e) =>
+                            setRowsSelected((rows) =>
+                              rows.map((row) =>
+                                row.id === id
+                                  ? {
+                                      ...row,
+                                      value: Number(e.target.value).toString(),
+                                    }
+                                  : row
+                              )
+                            )
+                          }
+                        />
+                      </td>
+                    ) : (
+                      <td
+                        onClick={() =>
+                          setRowsExpanded((prevValue) =>
+                            prevValue.includes(id)
+                              ? prevValue.filter((row) => row !== id)
+                              : [...prevValue, id]
+                          )
+                        }
+                      >
+                        <span className={styles.expandable}>
+                          {rowsExpanded.includes(id) ? (
+                            <KeyboardControlKeyRoundedIcon />
+                          ) : (
+                            <KeyboardArrowDownRoundedIcon />
+                          )}
+                        </span>
+                      </td>
+                    )}
+
                     <td
                       style={{ wordWrap: "break-word", maxWidth: "250px" }}
                       onDoubleClick={() =>
@@ -294,6 +353,7 @@ const Home = () => {
                             maxRows={4}
                             variant="outlined"
                             fullWidth
+                            autoFocus
                             size="small"
                             value={editableField.value}
                             onChange={(e) =>
@@ -344,9 +404,6 @@ const Home = () => {
                           <TextField
                             id="name"
                             type="number"
-                            multiline
-                            rows={2}
-                            maxRows={4}
                             variant="outlined"
                             fullWidth
                             size="small"
@@ -357,6 +414,7 @@ const Home = () => {
                                 value: +e.target.value,
                               }))
                             }
+                            autoFocus
                             InputProps={{
                               style: {
                                 padding: "1.5px 9px",
@@ -423,6 +481,7 @@ const Home = () => {
                             maxRows={4}
                             variant="outlined"
                             fullWidth
+                            autoFocus
                             size="small"
                             value={editableField.value}
                             onChange={(e) =>

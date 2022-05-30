@@ -1,6 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import { Button, TextField } from "@mui/material";
 import { RemoveCartridgeMutation } from "lib/Mutations";
+import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
 import { DeleteCartridgeModal } from "pages";
 import React, { Dispatch } from "react";
 import Modal from "./Modal";
@@ -44,7 +45,25 @@ const DeleteCartridgeModal = ({
           variant="outlined"
           color="error"
           onClick={() => {
-            removeCartridge({ variables: { id: deleteCartridgeModal.id } }),
+            removeCartridge({
+              variables: { id: deleteCartridgeModal.id },
+              update: (cache, { data: { deleteCartridge } }) => {
+                const cartridgeData = cache.readQuery<CartridgesData>({
+                  query: AllCartridgesQuery,
+                });
+
+                cache.writeQuery<CartridgesData>({
+                  query: AllCartridgesQuery,
+                  data: {
+                    cartridge: [
+                      ...cartridgeData!.cartridge.filter(
+                        (item) => item.id !== deleteCartridgeModal.id
+                      ),
+                    ],
+                  },
+                });
+              },
+            }),
               setDeleteCartridgeModal({ id: 0, name: "" });
           }}
         >

@@ -48,12 +48,17 @@ export class CartridgeService {
         cartridge,
       });
       await this.logRepository.save(log);
-      return this.cartridgeRepository.save({
+      await this.cartridgeRepository.save({
         id,
         amount:
           type === CartridgeAction.add
             ? cartridge.amount + amount
             : cartridge.amount - amount,
+      });
+      return await this.cartridgeRepository.findOne({
+        where: { id },
+        relations: { logs: true },
+        order: { logs: { id: 1 } },
       });
     }
     if (info !== undefined) {

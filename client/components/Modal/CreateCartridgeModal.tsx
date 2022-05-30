@@ -2,6 +2,7 @@ import { ApolloError, gql, useMutation } from "@apollo/client";
 import { Button, TextField } from "@mui/material";
 import { Form, Formik } from "formik";
 import { CreateCartridgeMutation } from "lib/Mutations";
+import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
 import { AddCartridgeModal } from "pages";
 import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { ICartridge } from "../../types/cartridge";
@@ -25,35 +26,7 @@ const CreateCartridgeModal = ({
   const [
     createCartridge,
     { data: createResponseData, loading: createLoading, error: createError },
-  ] = useMutation(CreateCartridgeMutation, {
-    update(cache, { data: { createCartridge } }) {
-      cache.modify({
-        fields: {
-          cartridge(existingCartridges = []) {
-            const newCartridgeRef = cache.writeFragment({
-              data: createCartridge,
-              fragment: gql`
-                fragment NewCartridge on Cartridge {
-                  id
-                  amount
-                  name
-                  info
-                  logs {
-                    id
-                    description
-                    amount
-                    created_at
-                    type
-                  }
-                }
-              `,
-            });
-            return [...existingCartridges, newCartridgeRef];
-          },
-        },
-      });
-    },
-  });
+  ] = useMutation(CreateCartridgeMutation);
 
   return (
     <Modal
@@ -77,6 +50,18 @@ const CreateCartridgeModal = ({
               amount,
               info,
               name,
+            },
+            update: (cache, { data: { createCartridge } }) => {
+              const cartridgeData = cache.readQuery<CartridgesData>({
+                query: AllCartridgesQuery,
+              });
+
+              cache.writeQuery<CartridgesData>({
+                query: AllCartridgesQuery,
+                data: {
+                  cartridge: [...cartridgeData!.cartridge, createCartridge],
+                },
+              });
             },
           });
           setCreateModalVisible(false);

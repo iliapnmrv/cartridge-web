@@ -1,7 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
 import { Button, TextField } from "@mui/material";
 import { Form, Formik } from "formik";
-import { UpdateCartridgeMutation } from "lib/Mutations";
+import {
+  UpdateCartridgeAmountMutation,
+  UpdateCartridgeMutation,
+} from "lib/Mutations";
 import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
 import { AddCartridgeModal } from "pages";
 import React, { Dispatch } from "react";
@@ -22,17 +25,33 @@ const UpdateCartridgeModal = ({
   setAddCartridgeModal,
 }: Props) => {
   const [
-    updateCartridges,
+    updateCartridge,
     { data: updateResponseData, loading: updateLoading, error: updateError },
-  ] = useMutation(UpdateCartridgeMutation);
+  ] = useMutation(UpdateCartridgeAmountMutation);
 
   const updateCartridgesAmount = (amount: number, description?: string) => {
-    updateCartridges({
+    updateCartridge({
       variables: {
         id: addCartridgeModal.id,
         amount,
         type: addCartridgeModal.type,
         description,
+      },
+      update: (cache, { data: { updateCartridge } }) => {
+        const cartridgeData = cache.readQuery<CartridgesData>({
+          query: AllCartridgesQuery,
+        });
+
+        cache.writeQuery<CartridgesData>({
+          query: AllCartridgesQuery,
+          data: {
+            cartridge: [
+              ...cartridgeData!.cartridge.map((item) =>
+                item.id === updateCartridge!.id ? updateCartridge : item
+              ),
+            ],
+          },
+        });
       },
     });
   };
@@ -43,11 +62,15 @@ const UpdateCartridgeModal = ({
         setAddCartridgeModal({ type: "sub", id: 0 });
       }}
       isOpen={addCartridgeModal.id !== 0}
-      title="Добавить картридж"
+      title={`${
+        addCartridgeModal.type === "sub"
+          ? "Выдача картриджей"
+          : "Поступление картриджей"
+      }`}
     >
       <p style={{ marginTop: "10px" }}>
         Укажите количество{" "}
-        {addCartridgeModal.type === "sub" ? "расходных" : "поступивших"}{" "}
+        {addCartridgeModal.type === "sub" ? "выданых" : "поступивших"}{" "}
         картриджей
       </p>
       <Formik
