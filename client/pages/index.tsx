@@ -143,8 +143,6 @@ const Home = () => {
     setPeriod(event.target.value as string);
   };
 
-  console.log(items);
-
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   return !loading ? (
@@ -195,23 +193,7 @@ const Home = () => {
           <td colSpan={9}></td>
           </tr> */}
           <tr>
-            <th>
-              <Checkbox
-                {...label}
-                checked={rowsSelected.length === data?.cartridge.length}
-                onChange={(e) =>
-                  setRowsSelected(
-                    rowsSelected.length === data?.cartridge.length
-                      ? []
-                      : items.map((item) => ({
-                          id: item.id,
-                          value: 0,
-                          name: "",
-                        }))
-                  )
-                }
-              />
-            </th>
+            <th></th>
             {/* Ячейка для стрелки */}
             <th></th>
             <th
@@ -618,6 +600,7 @@ const Home = () => {
             Наименование: name,
             Количество: value,
           }))}
+          setData={() => setRowsSelected([])}
         />
       ) : null}
     </div>

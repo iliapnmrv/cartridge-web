@@ -1,12 +1,14 @@
-import React, { useRef } from "react";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 import { Fab } from "@mui/material";
 import styles from "../../styles/CreateReport.module.css";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import moment from "moment";
 
 type Props = {
   data: Array<any>;
+  setData?: Dispatch<SetStateAction<any>>;
 };
 
 const CreateReport = ({ data }: Props) => {
@@ -29,7 +31,9 @@ const CreateReport = ({ data }: Props) => {
         aria-label="add"
         variant="extended"
         className={styles["export-button"]}
-        onClick={() => exportToCSV(data, "123")}
+        onClick={() =>
+          exportToCSV(data, `Заказ поставщику ${moment().format("l")}`)
+        }
       >
         <FileDownloadOutlinedIcon sx={{ mr: 1 }} />
         Скачать
