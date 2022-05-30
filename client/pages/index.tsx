@@ -13,6 +13,7 @@ import {
   Button,
   ButtonGroup,
   Checkbox,
+  Fab,
   MenuItem,
   SelectChangeEvent,
   Skeleton,
@@ -29,6 +30,7 @@ import {
   UpdateCartridgeAmountMutation,
   UpdateCartridgeMutation,
 } from "lib/Mutations";
+import CreateReport from "../components/CreateReport/CreateReport";
 moment.locale("ru");
 
 export interface AddCartridgeModal {
@@ -48,6 +50,7 @@ export interface EditableField {
 
 export interface IRowsSelected {
   id: number;
+  name: string;
   value: string | number | undefined;
 }
 
@@ -140,7 +143,7 @@ const Home = () => {
     setPeriod(event.target.value as string);
   };
 
-  console.log(rowsSelected);
+  console.log(items);
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
@@ -200,7 +203,11 @@ const Home = () => {
                   setRowsSelected(
                     rowsSelected.length === data?.cartridge.length
                       ? []
-                      : items.map((item) => ({ id: item.id, value: 0 }))
+                      : items.map((item) => ({
+                          id: item.id,
+                          value: 0,
+                          name: "",
+                        }))
                   )
                 }
               />
@@ -267,7 +274,7 @@ const Home = () => {
                               )
                             : setRowsSelected((rows) => [
                                 ...rows,
-                                { id, value: 0 },
+                                { id, value: 0, name },
                               ])
                         }
                       />
@@ -604,6 +611,15 @@ const Home = () => {
           )}
         </tbody>
       </table>
+
+      {rowsSelected.length ? (
+        <CreateReport
+          data={rowsSelected.map(({ name, value }) => ({
+            Наименование: name,
+            Количество: value,
+          }))}
+        />
+      ) : null}
     </div>
   ) : (
     <>

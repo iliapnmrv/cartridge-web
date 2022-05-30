@@ -3,6 +3,7 @@
     justify-content: center;
     flex-direction: column;
     padding: 0rem 3rem;
+    position: relative;
 }
 
 .expandable {
