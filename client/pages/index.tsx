@@ -319,12 +319,7 @@ const Home = () => {
                       </td>
                     )}
 
-                    <td
-                      style={{ wordWrap: "break-word", maxWidth: "250px" }}
-                      onDoubleClick={() =>
-                        setEditableField({ fieldName: "name", id, value: name })
-                      }
-                    >
+                    <td style={{ wordWrap: "break-word", maxWidth: "250px" }}>
                       <div
                         style={{
                           maxWidth: "220px",
@@ -332,43 +327,7 @@ const Home = () => {
                           overflow: "auto",
                         }}
                       >
-                        {editableField.id === id &&
-                        editableField.fieldName === "name" ? (
-                          <TextField
-                            id="name"
-                            type="text"
-                            multiline
-                            rows={2}
-                            maxRows={4}
-                            variant="outlined"
-                            fullWidth
-                            autoFocus
-                            size="small"
-                            value={editableField.value}
-                            onChange={(e) =>
-                              setEditableField((prevValue) => ({
-                                ...prevValue,
-                                value: e.target.value,
-                              }))
-                            }
-                            InputProps={{
-                              style: {
-                                padding: "1.5px 9px",
-                              },
-                              endAdornment: (
-                                <DoneRoundedIcon
-                                  fontSize="large"
-                                  className={styles.expandable}
-                                  onClick={() => {
-                                    updateCartridgesData();
-                                  }}
-                                />
-                              ),
-                            }}
-                          />
-                        ) : (
-                          name
-                        )}
+                        {name}
                       </div>
                     </td>
                     <td
