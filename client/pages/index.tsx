@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { ISortConfig, useSortableData } from "../hooks/useSortable";
@@ -9,6 +9,7 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import KeyboardControlKeyRoundedIcon from "@mui/icons-material/KeyboardControlKeyRounded";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import {
   Button,
   ButtonGroup,
@@ -25,7 +26,11 @@ import UpdateCartridgeModal from "../components/Modal/UpdateCartridgeModal";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import CreateCartridgeModal from "../components/Modal/CreateCartridgeModal";
 import DeleteCartridgeModal from "../components/Modal/DeleteCartridgeModal";
-import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
+import {
+  AllCartridgesQuery,
+  CartridgesData,
+  SearchCartridgesQuery,
+} from "lib/Queries";
 import {
   UpdateCartridgeAmountMutation,
   UpdateCartridgeMutation,
@@ -61,6 +66,20 @@ const Home = () => {
     updateCartridges,
     { data: updateResponseData, loading: updateLoading, error: updateError },
   ] = useMutation(UpdateCartridgeMutation);
+  const [executeSearch, { data: searchCartridges }] = useLazyQuery(
+    SearchCartridgesQuery
+  );
+  const [cartridgesData, setCartridgesData] = useState<ICartridge[]>([]);
+
+  useEffect(() => {
+    data?.cartridge ? setCartridgesData(data.cartridge) : null;
+  }, [data]);
+
+  useEffect(() => {
+    searchCartridges?.searchCartridges
+      ? setCartridgesData(searchCartridges.searchCartridges)
+      : null;
+  }, [searchCartridges]);
 
   const updateCartridgesData = () => {
     updateCartridges({
@@ -89,10 +108,16 @@ const Home = () => {
   });
   const [rowsExpanded, setRowsExpanded] = useState<number[]>([]);
   const [rowsSelected, setRowsSelected] = useState<IRowsSelected[]>([]);
-
+  const [search, setSearch] = useState<string>("");
   const [addCartridgeModal, setAddCartridgeModal] = useState<AddCartridgeModal>(
     { type: "add", id: 0 }
   );
+
+  useEffect(() => {
+    executeSearch({
+      variables: { field: search },
+    });
+  }, [search]);
 
   interface IRequestSort {
     (key: string): void;
@@ -112,8 +137,8 @@ const Home = () => {
     requestSort: IRequestSort;
     sortConfig: ISortConfig;
   } = useSortableData(
-    data?.cartridge.length
-      ? data?.cartridge.map(({ id, name, amount, logs, info }) => ({
+    cartridgesData.length
+      ? cartridgesData.map(({ id, name, amount, logs, info }) => ({
           id,
           name,
           amount,
@@ -157,6 +182,7 @@ const Home = () => {
         >
           Добавить картридж
         </Button>
+
         <TextField
           value={period}
           label="Период"
@@ -171,6 +197,27 @@ const Home = () => {
           ))}
         </TextField>
       </div>
+
+      <TextField
+        id="search"
+        type="text"
+        variant="outlined"
+        size="small"
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+        }}
+        InputProps={{
+          endAdornment: (
+            <SearchOutlinedIcon
+              fontSize="large"
+              className={styles.expandable}
+            />
+          ),
+        }}
+        placeholder="Поиск по наименованию, примечанию..."
+        sx={{ mb: 1 }}
+      />
 
       <UpdateCartridgeModal
         setAddCartridgeModal={setAddCartridgeModal}
@@ -365,7 +412,7 @@ const Home = () => {
                             autoFocus
                             InputProps={{
                               style: {
-                                padding: "1.5px 9px",
+                                padding: "0px",
                               },
                               endAdornment: (
                                 <DoneRoundedIcon

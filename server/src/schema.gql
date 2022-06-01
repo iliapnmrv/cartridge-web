@@ -31,13 +31,13 @@ type Cartridge {
 
 type Query {
   cartridge: [Cartridge!]!
-  findByName(id: String!): Cartridge!
+  findByName(name: String!): Cartridge!
+  searchCartridges(field: String!): [Cartridge!]!
   logs: [Log!]!
   log(id: Int!): Log!
 }
 
 type Mutation {
-  searchCartridges(id: String!): [Cartridge!]!
   createCartridge(createCartridgeInput: CreateCartridgeInput!): Cartridge!
   updateCartridge(updateCartridgeInput: UpdateCartridgeInput!): Cartridge!
   removeCartridge(id: Int!): String!

@@ -28,15 +28,17 @@ export class CartridgeResolver {
 
   @Query(() => Cartridge)
   findByName(
-    @Args('id', { type: () => String }) name: string,
+    @Args('name', { type: () => String }) name: string,
   ): Promise<Cartridge> {
     return this.сartridgeService.findByName(name);
   }
 
-  @Mutation(() => [Cartridge])
+  @Query(() => [Cartridge])
   searchCartridges(
-    @Args('id', { type: () => String }) field: string,
+    @Args('field', { type: () => String }) field: string,
   ): Promise<Cartridge[]> {
+    console.log(field);
+
     return this.сartridgeService.search(field);
   }
 

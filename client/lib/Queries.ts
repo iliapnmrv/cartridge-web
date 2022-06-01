@@ -22,3 +22,21 @@ export const AllCartridgesQuery = gql`
     }
   }
 `;
+
+export const SearchCartridgesQuery = gql`
+  query searchCartridges($field: String!) {
+    searchCartridges(field: $field) {
+      id
+      amount
+      name
+      info
+      logs {
+        id
+        description
+        amount
+        created_at
+        type
+      }
+    }
+  }
+`;
