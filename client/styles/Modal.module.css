@@ -1,0 +1,45 @@
+.md-container {
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.md-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+}
+
+.md-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.close {
+    cursor: pointer;
+    border-radius: 20px;
+    width: 28px;
+    height: 28px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close svg {
+    margin-top: 2px;
+}
+
+.close:hover {
+    background-color: #eaeaea;
+}
