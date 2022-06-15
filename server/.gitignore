@@ -5,6 +5,9 @@
 # OS
 .DS_Store
 
+.development.env
+.production.env
+
 # Tests
 /coverage
 /.nyc_output
