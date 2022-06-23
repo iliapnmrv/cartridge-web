@@ -30,6 +30,8 @@ export class CartridgeResolver {
   findByName(
     @Args('name', { type: () => String }) name: string,
   ): Promise<Cartridge> {
+    console.log(name);
+
     return this.сartridgeService.findByName(name);
   }
 
