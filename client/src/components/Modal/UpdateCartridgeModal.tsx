@@ -6,7 +6,7 @@ import {
   UpdateCartridgeMutation,
 } from "lib/Mutations";
 import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
-import { AddCartridgeModal } from "pages";
+import { AddCartridgeModal } from "../../pages/cartridge/index";
 import React, { Dispatch } from "react";
 import Modal from "./Modal";
 
