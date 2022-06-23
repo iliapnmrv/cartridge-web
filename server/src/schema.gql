@@ -31,7 +31,7 @@ type Cartridge {
 
 type Query {
   cartridge: [Cartridge!]!
-  findByName(name: String!): Cartridge!
+  findByName(name: String!): Cartridge
   searchCartridges(field: String!): [Cartridge!]!
   logs: [Log!]!
   log(id: Int!): Log!

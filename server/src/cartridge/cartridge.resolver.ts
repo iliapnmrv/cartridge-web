@@ -26,7 +26,7 @@ export class CartridgeResolver {
     return this.сartridgeService.findAll();
   }
 
-  @Query(() => Cartridge)
+  @Query(() => Cartridge, { nullable: true })
   findByName(
     @Args('name', { type: () => String }) name: string,
   ): Promise<Cartridge> {
