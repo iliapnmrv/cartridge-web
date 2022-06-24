@@ -42,27 +42,29 @@ const Med = (props: Props) => {
             </tr>
           </thead>
           <tbody>
-            {data?.workers.map((worker) => {
-              const medDate = moment(worker.lastMed).add(335, "days");
-              const medWeekDay = medDate.isoWeekday();
+            {data?.workers
+              .filter((worker) => worker.name.includes(search))
+              .map((worker) => {
+                const medDate = moment(worker.lastMed).add(335, "days");
+                const medWeekDay = medDate.isoWeekday();
 
-              return (
-                <tr key={worker.id}>
-                  <td>{worker.tabNom}</td>
-                  <td>{worker.name}</td>
-                  <td>{worker.position}</td>
-                  <td>{moment(worker.lastMed).format("L")}</td>
-                  <td>{moment(Date.now()).diff(worker.lastMed, "days")}</td>
-                  <td>
-                    {medWeekDay === 1 || medWeekDay === 3
-                      ? medDate.format("L")
-                      : medWeekDay === 2
-                      ? medDate.isoWeekday(1).format("L")
-                      : medDate.isoWeekday(3).format("L")}
-                  </td>
-                </tr>
-              );
-            })}
+                return (
+                  <tr key={worker.id}>
+                    <td>{worker.tabNom}</td>
+                    <td>{worker.name}</td>
+                    <td>{worker.position}</td>
+                    <td>{moment(worker.lastMed).format("L")}</td>
+                    <td>{moment(Date.now()).diff(worker.lastMed, "days")}</td>
+                    <td>
+                      {medWeekDay === 1 || medWeekDay === 3
+                        ? medDate.format("L")
+                        : medWeekDay === 2
+                        ? medDate.isoWeekday(1).format("L")
+                        : medDate.isoWeekday(3).format("L")}
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </>
