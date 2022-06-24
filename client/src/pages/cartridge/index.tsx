@@ -21,7 +21,6 @@ import {
   TextField,
 } from "@mui/material";
 import { periods } from "constants/index";
-import "moment/locale/ru";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import CreateCartridgeModal from "components/Modal/CreateCartridgeModal";
 import DeleteCartridgeModal from "components/Modal/DeleteCartridgeModal";
@@ -38,7 +37,6 @@ import { QRCodeSVG } from "qrcode.react";
 import CreateReport from "components/CreateReport/CreateReport";
 import UpdateCartridgeModal from "components/Modal/UpdateCartridgeModal";
 import Search from "components/Search/Search";
-moment.locale("ru");
 
 export interface AddCartridgeModal {
   type: "sub" | "add";
@@ -76,8 +74,6 @@ const Home = () => {
   useEffect(() => {
     data?.cartridge ? setCartridgesData(data.cartridge) : null;
   }, [data]);
-
-  console.log("data", data);
 
   useEffect(() => {
     searchCartridges?.searchCartridges

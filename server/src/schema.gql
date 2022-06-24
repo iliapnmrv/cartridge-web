@@ -46,7 +46,7 @@ type Worker {
   shift: String
   lastMed: DateTime
   isException: Boolean!
-  harm: Harm!
+  harm: Harm
 }
 
 type Query {

@@ -1,8 +1,13 @@
 import { gql } from "@apollo/client";
+import { IWorker } from "types/worker";
 import { ICartridge } from "../types/cartridge";
 
 export type CartridgesData = {
   cartridge: ICartridge[];
+};
+
+export type WorkersData = {
+  workers: IWorker[];
 };
 
 export const AllCartridgesQuery = gql`
@@ -18,6 +23,23 @@ export const AllCartridgesQuery = gql`
         amount
         created_at
         type
+      }
+    }
+  }
+`;
+
+export const AllWorkersQuery = gql`
+  query findAllWorkers {
+    workers {
+      tabNom
+      name
+      position
+      dateOfBirth
+      shift
+      lastMed
+      isException
+      harm {
+        id
       }
     }
   }

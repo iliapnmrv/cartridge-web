@@ -13,6 +13,7 @@ export class WorkerService {
 
   async findAll(): Promise<Worker[]> {
     return await this.workerRepository.find({
+      relations: { harm: true },
       order: { name: 1 },
     });
   }

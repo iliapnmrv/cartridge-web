@@ -41,6 +41,6 @@ export class Worker {
   harmId?: number;
 
   @ManyToOne(() => Harm, (harm) => harm.workers)
-  @Field(() => Harm)
+  @Field(() => Harm, { nullable: true })
   harm: Harm;
 }
