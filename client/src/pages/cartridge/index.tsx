@@ -33,6 +33,7 @@ import {
 import { UpdateCartridgeMutation } from "lib/Mutations";
 import CreateReport from "components/CreateReport/CreateReport";
 import UpdateCartridgeModal from "components/Modal/UpdateCartridgeModal";
+import Search from "components/Search/Search";
 moment.locale("ru");
 
 export interface AddCartridgeModal {
@@ -195,25 +196,10 @@ const Home = () => {
         </TextField>
       </div>
 
-      <TextField
-        id="search"
-        type="text"
-        variant="outlined"
-        size="small"
+      <Search
         value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
-        InputProps={{
-          endAdornment: (
-            <SearchOutlinedIcon
-              fontSize="large"
-              className={styles.expandable}
-            />
-          ),
-        }}
+        setValue={setSearch}
         placeholder="Поиск по наименованию, примечанию..."
-        sx={{ mb: 1 }}
       />
 
       <UpdateCartridgeModal
