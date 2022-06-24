@@ -1,9 +1,9 @@
 import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { ISortConfig, useSortableData } from "../hooks/useSortable";
-import styles from "../styles/Home.module.css";
-import { ICartridge, LogTypesEnum } from "../types/cartridge";
+import { ISortConfig, useSortableData } from "hooks/useSortable";
+import styles from "styles/Home.module.css";
+import { ICartridge, LogTypesEnum } from "types/cartridge";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import KeyboardControlKeyRoundedIcon from "@mui/icons-material/KeyboardControlKeyRounded";
@@ -20,12 +20,11 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
-import { periods } from "../constants/index";
+import { periods } from "constants/index";
 import "moment/locale/ru";
-import UpdateCartridgeModal from "../components/Modal/UpdateCartridgeModal";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
-import CreateCartridgeModal from "../components/Modal/CreateCartridgeModal";
-import DeleteCartridgeModal from "../components/Modal/DeleteCartridgeModal";
+import CreateCartridgeModal from "components/Modal/CreateCartridgeModal";
+import DeleteCartridgeModal from "components/Modal/DeleteCartridgeModal";
 import {
   AllCartridgesQuery,
   CartridgesData,
@@ -36,7 +35,8 @@ import {
   UpdateCartridgeMutation,
 } from "lib/Mutations";
 import { QRCodeSVG } from "qrcode.react";
-import CreateReport from "../components/CreateReport/CreateReport";
+import CreateReport from "components/CreateReport/CreateReport";
+import UpdateCartridgeModal from "components/Modal/UpdateCartridgeModal";
 moment.locale("ru");
 
 export interface AddCartridgeModal {

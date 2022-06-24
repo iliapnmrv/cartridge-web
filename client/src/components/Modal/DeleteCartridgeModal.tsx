@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { Button, TextField } from "@mui/material";
 import { RemoveCartridgeMutation } from "lib/Mutations";
 import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
-import { DeleteCartridgeModal } from "pages";
+import { DeleteCartridgeModal } from "pages/cartridge/index";
 import React, { Dispatch } from "react";
 import Modal from "./Modal";
 

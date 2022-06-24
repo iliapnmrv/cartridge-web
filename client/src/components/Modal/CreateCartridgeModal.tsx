@@ -3,9 +3,7 @@ import { Button, TextField } from "@mui/material";
 import { Form, Formik } from "formik";
 import { CreateCartridgeMutation } from "lib/Mutations";
 import { AllCartridgesQuery, CartridgesData } from "lib/Queries";
-import { AddCartridgeModal } from "pages";
-import React, { Dispatch, SetStateAction, useEffect } from "react";
-import { ICartridge } from "../../types/cartridge";
+import React, { Dispatch } from "react";
 import Modal from "./Modal";
 
 type Props = {

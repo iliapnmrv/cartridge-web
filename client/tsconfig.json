@@ -16,11 +16,12 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "assets/*": ["./src/assets/*"],
+      "assets/*": ["assets/*"],
       "components/*": ["./src/components/*"],
       "constants/*": ["./src/constants/*"],
       "layouts/*": ["./src/layouts/*"],
       "pages/*": ["./src/pages/*"],
+      "lib/*": ["./src/lib/*"],
       "types/*": ["./src/types/*"],
       "store/*": ["./src/store/*"],
       "styles/*": ["./src/styles/*"],
