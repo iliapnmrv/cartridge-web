@@ -30,7 +30,11 @@ import {
   CartridgesData,
   SearchCartridgesQuery,
 } from "lib/Queries";
-import { UpdateCartridgeMutation } from "lib/Mutations";
+import {
+  UpdateCartridgeAmountMutation,
+  UpdateCartridgeMutation,
+} from "lib/Mutations";
+import { QRCodeSVG } from "qrcode.react";
 import CreateReport from "components/CreateReport/CreateReport";
 import UpdateCartridgeModal from "components/Modal/UpdateCartridgeModal";
 import Search from "components/Search/Search";
@@ -523,6 +527,12 @@ const Home = () => {
                   </tr>
                   {rowsExpanded.includes(id) ? (
                     <>
+                      <tr key={id} className="noHover">
+                        <td colSpan={9}>
+                          <QRCodeSVG value={name} />
+                        </td>
+                      </tr>
+
                       {logs?.length ? (
                         <>
                           <tr key={id} className="noHover">

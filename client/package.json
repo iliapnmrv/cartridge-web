@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
+        "dev": "next dev -p 3002",
         "build": "next build",
-        "start": "next start -p 3001",
+        "start": "next start -p 3002",
         "lint": "next lint"
     },
     "dependencies": {
@@ -19,6 +19,7 @@
         "graphql": "^16.5.0",
         "moment": "^2.29.3",
         "next": "12.1.6",
+        "qrcode.react": "^3.0.2",
         "react": "18.1.0",
         "react-dom": "18.1.0",
         "xlsx": "^0.18.5"
