@@ -1,19 +1,8 @@
-import {
-  Args,
-  Float,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Cartridge } from './entities/cartridge.entity';
 import { CartridgeService } from './cartridge.service';
 import { CreateCartridgeInput } from './dto/create-cartridge.input';
 import { UpdateCartridgeInput } from './dto/update-cartridge.input';
-import { Log } from 'src/logs/entities/log.entity';
-import { LogsService } from 'src/logs/logs.service';
 
 @Resolver((of) => Cartridge)
 export class CartridgeResolver {

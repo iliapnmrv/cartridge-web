@@ -29,6 +29,14 @@ type Cartridge {
   logs: [Log!]
 }
 
+type Harm {
+  id: Int!
+  position: String!
+  harm: String!
+  harmNum: String!
+  workers: [Worker!]
+}
+
 type Worker {
   id: Int!
   tabNom: String!
@@ -41,35 +49,18 @@ type Worker {
   harm: Harm!
 }
 
-type Harm {
-  id: Int!
-  position: String!
-  harm: String!
-  harmNum: String!
-  workers: [Worker!]
-}
-
 type Query {
   cartridge: [Cartridge!]!
   findByName(name: String!): Cartridge
   searchCartridges(field: String!): [Cartridge!]!
-  logs: [Log!]!
-  log(id: Int!): Log!
-  harm(id: Int!): Harm!
-  worker: [Worker!]!
+  findAll: [Worker!]!
 }
 
 type Mutation {
   createCartridge(createCartridgeInput: CreateCartridgeInput!): Cartridge!
   updateCartridge(updateCartridgeInput: UpdateCartridgeInput!): Cartridge!
   removeCartridge(id: Int!): String!
-  createLog(createLogInput: CreateLogInput!): Log!
-  createHarm(createHarmInput: CreateHarmInput!): Harm!
-  updateHarm(updateHarmInput: UpdateHarmInput!): Harm!
-  removeHarm(id: Int!): Harm!
-  createWorker(createWorkerInput: CreateWorkerInput!): Worker!
   updateWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
-  removeWorker(id: Int!): Worker!
 }
 
 input CreateCartridgeInput {
@@ -87,30 +78,9 @@ input UpdateCartridgeInput {
   type: CartridgeAction
 }
 
-input CreateLogInput {
-  description: String
-  amount: Int!
-  type: CartridgeAction!
-}
-
-input CreateHarmInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateHarmInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateWorkerInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 input UpdateWorkerInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: Float!
+  lastMed: String
+  harmId: Float
+  isException: Boolean
 }

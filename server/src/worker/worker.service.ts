@@ -1,26 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWorkerInput } from './dto/create-worker.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { UpdateWorkerInput } from './dto/update-worker.input';
+import { Worker } from './entities/worker.entity';
 
 @Injectable()
 export class WorkerService {
-  create(createWorkerInput: CreateWorkerInput) {
-    return 'This action adds a new worker';
+  constructor(
+    @InjectRepository(Worker)
+    private workerRepository: Repository<Worker>,
+  ) {}
+
+  async findAll(): Promise<Worker[]> {
+    return await this.workerRepository.find({
+      relations: { harm: true },
+      order: { name: 1 },
+    });
   }
 
-  findAll() {
-    return `This action returns all worker`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} worker`;
-  }
-
-  update(id: number, updateWorkerInput: UpdateWorkerInput) {
+  async update(id: number, updateWorkerInput: UpdateWorkerInput) {
     return `This action updates a #${id} worker`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} worker`;
   }
 }

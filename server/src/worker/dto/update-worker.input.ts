@@ -1,8 +1,16 @@
-import { CreateWorkerInput } from './create-worker.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateWorkerInput extends PartialType(CreateWorkerInput) {
-  @Field(() => Int)
+export class UpdateWorkerInput {
+  @Field()
   id: number;
+
+  @Field({ nullable: true })
+  lastMed?: string;
+
+  @Field({ nullable: true })
+  harmId?: number;
+
+  @Field({ nullable: true })
+  isException?: boolean;
 }
