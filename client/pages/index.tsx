@@ -35,6 +35,7 @@ import {
   UpdateCartridgeAmountMutation,
   UpdateCartridgeMutation,
 } from "lib/Mutations";
+import { QRCodeSVG } from "qrcode.react";
 import CreateReport from "../components/CreateReport/CreateReport";
 moment.locale("ru");
 
@@ -540,6 +541,12 @@ const Home = () => {
                   </tr>
                   {rowsExpanded.includes(id) ? (
                     <>
+                      <tr key={id} className="noHover">
+                        <td colSpan={9}>
+                          <QRCodeSVG value={name} />
+                        </td>
+                      </tr>
+
                       {logs?.length ? (
                         <>
                           <tr key={id} className="noHover">
