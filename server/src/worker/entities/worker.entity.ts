@@ -37,8 +37,8 @@ export class Worker {
   @Field(() => Boolean)
   isException: boolean;
 
-  @Column()
-  harmId: number;
+  @Column({ nullable: true })
+  harmId?: number;
 
   @ManyToOne(() => Harm, (harm) => harm.workers)
   @Field(() => Harm)

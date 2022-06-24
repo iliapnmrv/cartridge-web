@@ -7,13 +7,12 @@ import { Worker } from './entities/worker.entity';
 @Injectable()
 export class WorkerService {
   constructor(
-    @InjectRepository(Worker)
+    @InjectRepository(Worker, 'med')
     private workerRepository: Repository<Worker>,
   ) {}
 
   async findAll(): Promise<Worker[]> {
     return await this.workerRepository.find({
-      relations: { harm: true },
       order: { name: 1 },
     });
   }

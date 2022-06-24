@@ -6,7 +6,7 @@ export type CartridgesData = {
 };
 
 export const AllCartridgesQuery = gql`
-  query {
+  query findAllCartridges {
     cartridge {
       id
       amount

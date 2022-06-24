@@ -4,11 +4,9 @@ import { CartridgeService } from './cartridge.service';
 import { CreateCartridgeInput } from './dto/create-cartridge.input';
 import { UpdateCartridgeInput } from './dto/update-cartridge.input';
 
-@Resolver((of) => Cartridge)
+@Resolver(() => Cartridge)
 export class CartridgeResolver {
-  constructor(
-    private сartridgeService: CartridgeService, // private logsService: LogsService,
-  ) {}
+  constructor(private сartridgeService: CartridgeService) {}
 
   @Query(() => [Cartridge])
   cartridge(): Promise<Cartridge[]> {

@@ -8,7 +8,7 @@ export class WorkerResolver {
   constructor(private readonly workerService: WorkerService) {}
 
   @Query(() => [Worker])
-  findAll(): Promise<Worker[]> {
+  workers(): Promise<Worker[]> {
     return this.workerService.findAll();
   }
 

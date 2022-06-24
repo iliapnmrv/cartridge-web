@@ -53,7 +53,7 @@ type Query {
   cartridge: [Cartridge!]!
   findByName(name: String!): Cartridge
   searchCartridges(field: String!): [Cartridge!]!
-  findAll: [Worker!]!
+  workers: [Worker!]!
 }
 
 type Mutation {

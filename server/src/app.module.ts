@@ -34,6 +34,7 @@ import { Worker } from './worker/entities/worker.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
+      name: 'med',
       host: process.env.MYSQL_HOST,
       port: Number(process.env.MYSQL_PORT),
       username: process.env.MYSQL_USERNAME2,

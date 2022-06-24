@@ -77,6 +77,8 @@ const Home = () => {
     data?.cartridge ? setCartridgesData(data.cartridge) : null;
   }, [data]);
 
+  console.log("data", data);
+
   useEffect(() => {
     searchCartridges?.searchCartridges
       ? setCartridgesData(searchCartridges.searchCartridges)
