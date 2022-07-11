@@ -14,11 +14,18 @@ export class WorkerService {
   async findAll(): Promise<Worker[]> {
     return await this.workerRepository.find({
       relations: { harm: true },
-      order: { name: 1 },
+      order: { name: 1, isException: 1 },
     });
   }
 
-  async update(id: number, updateWorkerInput: UpdateWorkerInput) {
-    return `This action updates a #${id} worker`;
+  async update(
+    id: number,
+    updateWorkerInput: UpdateWorkerInput,
+  ): Promise<Worker> {
+    const worker = await this.workerRepository.findOne({
+      where: { id },
+      relations: { harm: true },
+    });
+    return this.workerRepository.save({ ...worker, ...updateWorkerInput });
   }
 }

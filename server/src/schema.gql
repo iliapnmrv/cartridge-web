@@ -53,6 +53,7 @@ type Query {
   cartridge: [Cartridge!]!
   findByName(name: String!): Cartridge
   searchCartridges(field: String!): [Cartridge!]!
+  harms: [Harm!]!
   workers: [Worker!]!
 }
 
@@ -80,7 +81,7 @@ input UpdateCartridgeInput {
 
 input UpdateWorkerInput {
   id: Float!
-  lastMed: String
+  lastMed: DateTime
   harmId: Float
   isException: Boolean
 }

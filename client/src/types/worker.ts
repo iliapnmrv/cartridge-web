@@ -4,7 +4,7 @@ export interface IWorker {
   name: string;
   position: string;
   dateOfBirth: Date;
-  shift?: string;
+  shift: string;
   lastMed?: Date;
   isException: boolean;
   harm?: IHarm;

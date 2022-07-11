@@ -20,7 +20,7 @@ import {
   Skeleton,
   TextField,
 } from "@mui/material";
-import { periods } from "constants/index";
+import { checkboxLabel, periods } from "constants/index";
 import DoneRoundedIcon from "@mui/icons-material/DoneRounded";
 import CreateCartridgeModal from "components/Modal/CreateCartridgeModal";
 import DeleteCartridgeModal from "components/Modal/DeleteCartridgeModal";
@@ -168,8 +168,6 @@ const Home = () => {
     setPeriod(event.target.value as string);
   };
 
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
   return !loading ? (
     <div className={styles.container}>
       <h1>Картриджи</h1>
@@ -279,7 +277,7 @@ const Home = () => {
                   <tr key={id}>
                     <td>
                       <Checkbox
-                        {...label}
+                        {...checkboxLabel}
                         checked={rowsSelected.some((row) => row.id === id)}
                         onChange={(e) =>
                           rowsSelected.some((row) => row.id === id)

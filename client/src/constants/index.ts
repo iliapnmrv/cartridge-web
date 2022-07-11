@@ -25,3 +25,5 @@ export const periods: IPeriod[] = [
     label: "Все время",
   },
 ];
+
+export const checkboxLabel = { inputProps: { "aria-label": "Checkbox" } };

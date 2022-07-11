@@ -76,3 +76,29 @@ export const UpdateCartridgeMutation = gql`
     }
   }
 `;
+
+export const UpdateWorkerMutation = gql`
+  mutation updateWorker(
+    $id: Float!
+    $lastMed: DateTime
+    $harmId: Float
+    $isException: Boolean
+  ) {
+    updateWorker(
+      updateWorkerInput: {
+        id: $id
+        lastMed: $lastMed
+        harmId: $harmId
+        isException: $isException
+      }
+    ) {
+      id
+      lastMed
+      isException
+      harm {
+        harm
+        harmNum
+      }
+    }
+  }
+`;
