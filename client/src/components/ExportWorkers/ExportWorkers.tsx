@@ -7,10 +7,10 @@ import { exportToCSV } from "src/utils/exportToCSV";
 
 type Props = {
   data: Array<any>;
-  setData?: Function;
+  setData?: Dispatch<SetStateAction<any>>;
 };
 
-const CreateReport = ({ data, setData }: Props) => {
+const ExportWorkers = ({ data }: Props) => {
   return (
     <>
       <Fab
@@ -18,16 +18,13 @@ const CreateReport = ({ data, setData }: Props) => {
         aria-label="add"
         variant="extended"
         className={styles["export-button"]}
-        onClick={() => {
-          exportToCSV(data, `Заказ поставщику ${moment().format("l")}`);
-          setData ? setData() : null;
-        }}
+        onClick={() => exportToCSV(data, `Медкомиссия ${moment().format("L")}`)}
       >
         <FileDownloadOutlinedIcon sx={{ mr: 1 }} />
-        Скачать
+        Экспорт сотрудников
       </Fab>
     </>
   );
 };
 
-export default CreateReport;
+export default ExportWorkers;

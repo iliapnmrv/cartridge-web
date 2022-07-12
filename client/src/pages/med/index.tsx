@@ -36,6 +36,7 @@ import ErrorIcon from "@mui/icons-material/Error";
 import AddWorkerCommentModal from "components/Modal/AddWorkerCommentModal";
 import CancelIcon from "@mui/icons-material/Cancel";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import ExportWorkers from "components/ExportWorkers/ExportWorkers";
 
 type Props = {};
 
@@ -71,8 +72,10 @@ const Med = (props: Props) => {
   const [shifts, setShifts] = useState<string[]>([]);
   const [addWorkerCommentModal, setAddWorkerCommentModal] =
     useState<IAddWorkerCommentModal>({ id: 0, name: "", comment: "" });
-  const [dateFilter, setDateFilter] = useState<Date | null>();
-  const [dateFilterCancel, setDateFilterCancel] = useState<Date | null>();
+  const [dateFilter, setDateFilter] = useState<Date | null>(null);
+  const [dateFilterCancel, setDateFilterCancel] = useState<Date | null>(
+    new Date()
+  );
 
   const handleDateFilterChange = (newValue: Date | null) => {
     setDateFilter(newValue);
@@ -181,6 +184,31 @@ const Med = (props: Props) => {
         setValue={setSearch}
         placeholder="Поиск по ФИО..."
       />
+      {dateFilter ? (
+        <ExportWorkers
+          data={
+            data
+              ? data.workers.map(({ tabNom, name, lastMed }) => {
+                  const medDate = moment(lastMed).add(335, "days");
+                  const medWeekDay = medDate.isoWeekday();
+                  return {
+                    "Табельный номер": tabNom,
+                    ФИО: name,
+                    "Предыдущее прохождение медкомиссии":
+                      moment(lastMed).format("L"),
+                    "Предполагаемое прохождение":
+                      medWeekDay === 1 || medWeekDay === 3
+                        ? medDate.format("L")
+                        : medWeekDay === 2
+                        ? medDate.isoWeekday(1).format("L")
+                        : medDate.isoWeekday(3).format("L"),
+                  };
+                })
+              : []
+          }
+        />
+      ) : null}
+
       <>
         <table>
           <thead>
