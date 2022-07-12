@@ -17,6 +17,15 @@
     align-items: center;
 }
 
+.icon {
+    width: 40px;
+    height: 40px;
+}
+
+.icon:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
 .expandable svg {
     margin-top: 2px;
 }

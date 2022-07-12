@@ -49,6 +49,7 @@ export const AllWorkersQuery = gql`
         harm
         harmNum
       }
+      comment
     }
   }
 `;

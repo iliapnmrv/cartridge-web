@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
   Autocomplete,
+  Badge,
   Box,
   Checkbox,
   CircularProgress,
@@ -11,6 +12,7 @@ import {
   OutlinedInput,
   Select,
   SelectChangeEvent,
+  Stack,
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -27,14 +29,25 @@ import moment, { Moment } from "moment";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import styles from "styles/Home.module.css";
 import { IHarm } from "types/worker";
+import Fuse from "fuse.js";
+import NoteAltOutlinedIcon from "@mui/icons-material/NoteAltOutlined";
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
+import ErrorIcon from "@mui/icons-material/Error";
+import AddWorkerCommentModal from "components/Modal/AddWorkerCommentModal";
 
 type Props = {};
 
+export interface IAddWorkerCommentModal {
+  id: number;
+  name: string;
+  comment: string;
+}
+
 const Med = (props: Props) => {
-  const { data, loading, error, refetch } =
-    useQuery<WorkersData>(AllWorkersQuery);
   const { data: harms, loading: harmsLoading } =
     useQuery<HarmsData>(AllHarmsQuery);
+  const { data, loading, error, refetch } =
+    useQuery<WorkersData>(AllWorkersQuery);
   const [
     updateWorker,
     { data: updateResponseData, loading: updateLoading, error: updateError },
@@ -50,11 +63,12 @@ const Med = (props: Props) => {
           )
         )
       : null;
-    console.log("harms", harms);
   }, [harms]);
 
   const [search, setSearch] = useState<string>("");
   const [shifts, setShifts] = useState<string[]>([]);
+  const [addWorkerCommentModal, setAddWorkerCommentModal] =
+    useState<IAddWorkerCommentModal>({ id: 0, name: "", comment: "" });
 
   const handleShiftChange = (event: SelectChangeEvent<typeof shifts>) => {
     const {
@@ -72,11 +86,25 @@ const Med = (props: Props) => {
     });
   };
 
-  // console.log(updateResponseData.harm.harmNum);
+  const fuse = new Fuse(harmsOptions, {
+    keys: ["harm"],
+    shouldSort: true,
+  });
+
+  const filterOptions = (options: IHarm[], { inputValue }: any) => {
+    if (inputValue.length === 0) return options;
+    const fuzzySearch = fuse.search(inputValue).map((res) => res.item);
+    return fuzzySearch;
+  };
 
   return (
     <div className={styles.container}>
       <h1>Медкомиссия</h1>
+
+      <AddWorkerCommentModal
+        addWorkerCommentModal={addWorkerCommentModal}
+        setAddWorkerCommentModal={setAddWorkerCommentModal}
+      />
 
       <div className={styles.filters}>
         <FormControl sx={{ width: 300, mt: 3 }}>
@@ -121,7 +149,6 @@ const Med = (props: Props) => {
         <table>
           <thead>
             <tr>
-              <th>Исключить</th>
               <th>Табельный номер</th>
               <th>ФИО</th>
               <th>Должность</th>
@@ -151,19 +178,6 @@ const Med = (props: Props) => {
 
                 return (
                   <tr key={worker.id}>
-                    <td>
-                      <Checkbox
-                        {...checkboxLabel}
-                        checked={worker.isException}
-                        onClick={() => {
-                          updateWorkerData(
-                            worker.id,
-                            "isException",
-                            !worker.isException
-                          );
-                        }}
-                      />
-                    </td>
                     <td>{worker.tabNom}</td>
                     <td>{worker.name}</td>
                     <td>{worker.position}</td>
@@ -179,12 +193,11 @@ const Med = (props: Props) => {
                     <td>{worker.shift}</td>
                     <td>
                       <Autocomplete
-                        freeSolo
-                        disableClearable
-                        disablePortal
+                        selectOnFocus
                         id="combo-box-demo"
                         loading={harmsLoading}
                         options={harmsOptions}
+                        filterOptions={filterOptions}
                         //@ts-ignore
                         getOptionLabel={(option: IHarm) => option!.harm}
                         renderInput={(params) => (
@@ -203,34 +216,81 @@ const Med = (props: Props) => {
                         onChange={(event: any, newValue: IHarm) => {
                           updateWorkerData(worker.id, "harmId", newValue?.id);
                         }}
+                        sx={{ width: 300 }}
                       />
                     </td>
+                    <td>{worker?.harm?.harmNum}</td>
                     <td>
-                      {worker.id === updateResponseData?.updateWorker?.id
-                        ? updateResponseData?.updateWorker.harm.harmNum
-                        : worker?.harm?.harmNum}
-                    </td>
-                    <td>
-                      <DatePicker
-                        label="Выберите дату"
-                        value={
-                          moment(worker.lastMed).month() === moment().month() &&
-                          moment(worker.lastMed).year() === moment().year()
-                            ? worker.lastMed
-                            : null
-                        }
-                        onChange={(newValue) => {
-                          updateWorkerData(worker.id, "lastMed", newValue);
-                        }}
-                        renderInput={({ inputRef, inputProps, InputProps }) => (
-                          <Box
-                            sx={{ display: "flex", alignItems: "center" }}
-                            ref={inputRef}
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        m={0}
+                        sx={{ "span:last-child": { marginLeft: 0 } }}
+                      >
+                        <DatePicker
+                          label="Выберите дату"
+                          value={
+                            moment(worker.lastMed).month() ===
+                              moment().month() &&
+                            moment(worker.lastMed).year() === moment().year()
+                              ? worker.lastMed
+                              : null
+                          }
+                          onChange={(newValue) => {
+                            updateWorkerData(worker.id, "lastMed", newValue);
+                          }}
+                          renderInput={({
+                            inputRef,
+                            inputProps,
+                            InputProps,
+                          }) => (
+                            <Box
+                              sx={{ display: "flex", alignItems: "center" }}
+                              ref={inputRef}
+                            >
+                              {InputProps?.endAdornment}
+                            </Box>
+                          )}
+                        />
+                        {console.log(worker.comment)}
+                        <span
+                          className={[styles.expandable, styles.icon].join(" ")}
+                          onClick={() =>
+                            setAddWorkerCommentModal({
+                              id: worker.id,
+                              name: worker.name,
+                              comment: worker.comment || "",
+                            })
+                          }
+                        >
+                          <Badge
+                            color="secondary"
+                            variant="dot"
+                            invisible={!!!worker.comment}
                           >
-                            {InputProps?.endAdornment}
-                          </Box>
-                        )}
-                      />
+                            <NoteAltOutlinedIcon />
+                          </Badge>
+                        </span>
+                        <Checkbox
+                          sx={{
+                            width: "40px",
+                            height: "40px",
+                            marginLeft: "0px",
+                            padding: "0px",
+                          }}
+                          {...checkboxLabel}
+                          checked={worker.isException}
+                          icon={<ErrorOutlineOutlinedIcon />}
+                          checkedIcon={<ErrorIcon />}
+                          onClick={() => {
+                            updateWorkerData(
+                              worker.id,
+                              "isException",
+                              !worker.isException
+                            );
+                          }}
+                        />
+                      </Stack>
                     </td>
                   </tr>
                 );

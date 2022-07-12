@@ -38,6 +38,10 @@ export class Worker {
   isException: boolean;
 
   @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  comment: string;
+
+  @Column({ nullable: true })
   harmId?: number;
 
   @ManyToOne(() => Harm, (harm) => harm.workers)

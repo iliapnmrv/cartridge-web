@@ -13,4 +13,7 @@ export class UpdateWorkerInput {
 
   @Field({ nullable: true })
   isException?: boolean;
+
+  @Field({ nullable: true })
+  comment?: string;
 }

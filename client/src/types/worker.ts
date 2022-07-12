@@ -8,6 +8,7 @@ export interface IWorker {
   lastMed?: Date;
   isException: boolean;
   harm?: IHarm;
+  comment?: string;
 }
 
 export interface IHarm {

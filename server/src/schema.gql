@@ -46,6 +46,7 @@ type Worker {
   shift: String
   lastMed: DateTime
   isException: Boolean!
+  comment: String
   harm: Harm
 }
 
@@ -84,4 +85,5 @@ input UpdateWorkerInput {
   lastMed: DateTime
   harmId: Float
   isException: Boolean
+  comment: String
 }

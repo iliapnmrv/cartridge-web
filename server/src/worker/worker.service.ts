@@ -15,6 +15,7 @@ export class WorkerService {
     return await this.workerRepository.find({
       relations: { harm: true },
       order: { name: 1, isException: 1 },
+      // order: { isException: 1, name: 1 },
     });
   }
 
@@ -22,10 +23,13 @@ export class WorkerService {
     id: number,
     updateWorkerInput: UpdateWorkerInput,
   ): Promise<Worker> {
-    const worker = await this.workerRepository.findOne({
+    const worker = await this.workerRepository.update(id, {
+      ...updateWorkerInput,
+    });
+
+    return await this.workerRepository.findOne({
       where: { id },
       relations: { harm: true },
     });
-    return this.workerRepository.save({ ...worker, ...updateWorkerInput });
   }
 }

@@ -83,6 +83,7 @@ export const UpdateWorkerMutation = gql`
     $lastMed: DateTime
     $harmId: Float
     $isException: Boolean
+    $comment: String
   ) {
     updateWorker(
       updateWorkerInput: {
@@ -90,6 +91,7 @@ export const UpdateWorkerMutation = gql`
         lastMed: $lastMed
         harmId: $harmId
         isException: $isException
+        comment: $comment
       }
     ) {
       id
@@ -99,6 +101,7 @@ export const UpdateWorkerMutation = gql`
         harm
         harmNum
       }
+      comment
     }
   }
 `;
