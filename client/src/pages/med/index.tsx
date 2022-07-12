@@ -15,7 +15,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
 import Search from "components/Search/Search";
 import { checkboxLabel } from "constants/index";
 import { UpdateWorkerMutation } from "lib/Mutations";
@@ -34,6 +34,8 @@ import NoteAltOutlinedIcon from "@mui/icons-material/NoteAltOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ErrorIcon from "@mui/icons-material/Error";
 import AddWorkerCommentModal from "components/Modal/AddWorkerCommentModal";
+import CancelIcon from "@mui/icons-material/Cancel";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 type Props = {};
 
@@ -69,6 +71,16 @@ const Med = (props: Props) => {
   const [shifts, setShifts] = useState<string[]>([]);
   const [addWorkerCommentModal, setAddWorkerCommentModal] =
     useState<IAddWorkerCommentModal>({ id: 0, name: "", comment: "" });
+  const [dateFilter, setDateFilter] = useState<Date | null>();
+  const [dateFilterCancel, setDateFilterCancel] = useState<Date | null>();
+
+  const handleDateFilterChange = (newValue: Date | null) => {
+    setDateFilter(newValue);
+  };
+
+  useEffect(() => {
+    dateFilter ? setDateFilterCancel(null) : null;
+  }, [dateFilter]);
 
   const handleShiftChange = (event: SelectChangeEvent<typeof shifts>) => {
     const {
@@ -107,7 +119,7 @@ const Med = (props: Props) => {
       />
 
       <div className={styles.filters}>
-        <FormControl sx={{ width: 300, mt: 3 }}>
+        <FormControl sx={{ width: 300 }}>
           <InputLabel id="demo-multiple-checkbox-label">
             Смена сотрудников
           </InputLabel>
@@ -126,7 +138,7 @@ const Med = (props: Props) => {
             }
           >
             <MenuItem disabled value="">
-              <em>Выберите смену сотрудников</em>
+              <em>Выберите смены сотрудников</em>
             </MenuItem>
             {data?.workers
               .map((worker) => worker.shift)
@@ -139,6 +151,30 @@ const Med = (props: Props) => {
               ))}
           </Select>
         </FormControl>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <Checkbox
+            onClick={() => {
+              setDateFilterCancel(dateFilter ? dateFilter : null);
+              setDateFilter(dateFilter ? null : dateFilterCancel);
+            }}
+            checked={!!dateFilterCancel}
+            {...checkboxLabel}
+            icon={<CancelOutlinedIcon />}
+            checkedIcon={<CancelIcon />}
+          />
+          <DatePicker
+            label="Предстоящая медкомиссия на"
+            inputFormat="DD/MM/yyyy"
+            value={dateFilter}
+            onChange={handleDateFilterChange}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </div>
       </div>
       <Search
         value={search}
@@ -167,6 +203,13 @@ const Med = (props: Props) => {
             {data?.workers
               .filter((worker) => worker.name.includes(search))
               .filter((worker) =>
+                dateFilter
+                  ? moment(worker.lastMed)
+                      .add(moment(moment()).diff(dateFilter, "days"), "days")
+                      .diff(moment(), "days") <= -335
+                  : true
+              )
+              .filter((worker) =>
                 !shifts.length ? true : shifts.includes(worker.shift)
               )
               .map((worker) => {
@@ -176,13 +219,23 @@ const Med = (props: Props) => {
                   (harm) => harm.position === worker.position
                 );
 
+                const daysFromToday = moment(dateFilter).diff(moment(), "days");
+
                 return (
                   <tr key={worker.id}>
                     <td>{worker.tabNom}</td>
                     <td>{worker.name}</td>
                     <td>{worker.position}</td>
                     <td>{moment(worker.lastMed).format("LLLL")}</td>
-                    <td>{moment(Date.now()).diff(worker.lastMed, "days")}</td>
+                    <td>
+                      {moment().diff(worker.lastMed, "days")}{" "}
+                      {daysFromToday && daysFromToday !== 0 ? (
+                        <span style={{ color: "gray" }}>
+                          {daysFromToday > 0 ? "+" : null}
+                          {daysFromToday}
+                        </span>
+                      ) : null}
+                    </td>
                     <td>
                       {medWeekDay === 1 || medWeekDay === 3
                         ? medDate.format("LLLL")
@@ -252,7 +305,6 @@ const Med = (props: Props) => {
                             </Box>
                           )}
                         />
-                        {console.log(worker.comment)}
                         <span
                           className={[styles.expandable, styles.icon].join(" ")}
                           onClick={() =>
