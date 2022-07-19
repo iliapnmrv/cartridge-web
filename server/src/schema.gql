@@ -42,7 +42,6 @@ type Worker {
   tabNom: String!
   name: String!
   position: String!
-  dateOfBirth: DateTime!
   shift: String
   lastMed: DateTime
   isException: Boolean!

@@ -39,7 +39,6 @@ export const AllWorkersQuery = gql`
       tabNom
       name
       position
-      dateOfBirth
       shift
       lastMed
       isException

@@ -12,8 +12,10 @@ import {
   OutlinedInput,
   Select,
   SelectChangeEvent,
+  Skeleton,
   Stack,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { DatePicker, DesktopDatePicker } from "@mui/x-date-pickers";
 import Search from "components/Search/Search";
@@ -227,155 +229,176 @@ const Med = (props: Props) => {
               <th>Действия</th>
             </tr>
           </thead>
-          <tbody>
-            {data?.workers
-              .filter((worker) => worker.name.includes(search))
-              .filter((worker) =>
-                dateFilter
-                  ? moment(worker.lastMed)
-                      .add(moment(moment()).diff(dateFilter, "days"), "days")
-                      .diff(moment(), "days") <= -335
-                  : true
-              )
-              .filter((worker) =>
-                !shifts.length ? true : shifts.includes(worker.shift)
-              )
-              .map((worker) => {
-                const medDate = moment(worker.lastMed).add(335, "days");
-                const medWeekDay = medDate.isoWeekday();
-                const workerHarm = harms?.harms.filter(
-                  (harm) => harm.position === worker.position
-                );
+          {loading ? (
+            <tbody>
+              {[...Array(5)].map((_, index) => (
+                <tr key={index}>
+                  {[...Array(10)].map((_, index) => (
+                    <td key={index}>
+                      <Skeleton variant="rectangular" sx={{ my: 4, mx: 1 }} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          ) : (
+            <tbody>
+              {data?.workers
+                .filter((worker) => worker.name.includes(search))
+                .filter((worker) =>
+                  dateFilter
+                    ? moment(worker.lastMed)
+                        .add(moment(moment()).diff(dateFilter, "days"), "days")
+                        .diff(moment(), "days") <= -335
+                    : true
+                )
+                .filter((worker) =>
+                  !shifts.length ? true : shifts.includes(worker.shift)
+                )
+                .map((worker) => {
+                  const medDate = moment(worker.lastMed).add(335, "days");
+                  const medWeekDay = medDate.isoWeekday();
+                  const workerHarm = harms?.harms.filter(
+                    (harm) => harm.position === worker.position
+                  );
 
-                const daysFromToday = moment(dateFilter).diff(moment(), "days");
+                  const daysFromToday = moment(dateFilter).diff(
+                    moment(),
+                    "days"
+                  );
 
-                return (
-                  <tr key={worker.id}>
-                    <td>{worker.tabNom}</td>
-                    <td>{worker.name}</td>
-                    <td>{worker.position}</td>
-                    <td>{moment(worker.lastMed).format("LLLL")}</td>
-                    <td>
-                      {moment().diff(worker.lastMed, "days")}{" "}
-                      {daysFromToday && daysFromToday !== 0 ? (
-                        <span style={{ color: "gray" }}>
-                          {daysFromToday > 0 ? "+" : null}
-                          {daysFromToday}
-                        </span>
-                      ) : null}
-                    </td>
-                    <td>
-                      {medWeekDay === 1 || medWeekDay === 3
-                        ? medDate.format("LLLL")
-                        : medWeekDay === 2
-                        ? medDate.isoWeekday(1).format("LLLL")
-                        : medDate.isoWeekday(3).format("LLLL")}
-                    </td>
-                    <td>{worker.shift}</td>
-                    <td>
-                      <Autocomplete
-                        selectOnFocus
-                        id="combo-box-demo"
-                        loading={harmsLoading}
-                        options={harmsOptions}
-                        filterOptions={filterOptions}
-                        //@ts-ignore
-                        getOptionLabel={(option: IHarm) => option!.harm}
-                        renderInput={(params) => (
-                          <TextField {...params} label="Вредности" />
-                        )}
-                        value={
-                          worker.harm?.harm
-                            ? harms?.harms.filter(
-                                (harm) => harm.id === worker?.harm?.id
-                              )[0]
-                            : workerHarm?.length
-                            ? workerHarm[0]
-                            : undefined
-                        }
-                        //@ts-ignore
-                        onChange={(event: any, newValue: IHarm) => {
-                          updateWorkerData(worker.id, "harmId", newValue?.id);
-                        }}
-                        sx={{ width: 300 }}
-                      />
-                    </td>
-                    <td>{worker?.harm?.harmNum}</td>
-                    <td>
-                      <Stack
-                        direction="row"
-                        spacing={2}
-                        m={0}
-                        sx={{ "span:last-child": { marginLeft: 0 } }}
-                      >
-                        <DatePicker
-                          label="Выберите дату"
-                          value={
-                            moment(worker.lastMed).month() ===
-                              moment().month() &&
-                            moment(worker.lastMed).year() === moment().year()
-                              ? worker.lastMed
-                              : null
-                          }
-                          onChange={(newValue) => {
-                            updateWorkerData(worker.id, "lastMed", newValue);
-                          }}
-                          renderInput={({
-                            inputRef,
-                            inputProps,
-                            InputProps,
-                          }) => (
-                            <Box
-                              sx={{ display: "flex", alignItems: "center" }}
-                              ref={inputRef}
-                            >
-                              {InputProps?.endAdornment}
-                            </Box>
+                  return (
+                    <tr key={worker.id}>
+                      <td>{worker.tabNom}</td>
+                      <td>{worker.name}</td>
+                      <td>{worker.position}</td>
+                      <td>{moment(worker.lastMed).format("LLLL")}</td>
+                      <td>
+                        {moment().diff(worker.lastMed, "days")}{" "}
+                        {daysFromToday && daysFromToday !== 0 ? (
+                          <span style={{ color: "gray" }}>
+                            {daysFromToday > 0 ? "+" : null}
+                            {daysFromToday}
+                          </span>
+                        ) : null}
+                      </td>
+                      <td>
+                        {medWeekDay === 1 || medWeekDay === 3
+                          ? medDate.format("LLLL")
+                          : medWeekDay === 2
+                          ? medDate.isoWeekday(1).format("LLLL")
+                          : medDate.isoWeekday(3).format("LLLL")}
+                      </td>
+                      <td>{worker.shift}</td>
+                      <td>
+                        <Autocomplete
+                          selectOnFocus
+                          id="combo-box-demo"
+                          loading={harmsLoading}
+                          options={harmsOptions}
+                          filterOptions={filterOptions}
+                          //@ts-ignore
+                          getOptionLabel={(option: IHarm) => option!.harm}
+                          renderInput={(params) => (
+                            <TextField {...params} label="Вредности" />
                           )}
-                        />
-                        <span
-                          className={[styles.expandable, styles.icon].join(" ")}
-                          onClick={() =>
-                            setAddWorkerCommentModal({
-                              id: worker.id,
-                              name: worker.name,
-                              comment: worker.comment || "",
-                            })
+                          value={
+                            worker.harm?.harm
+                              ? harms?.harms.filter(
+                                  (harm) => harm.id === worker?.harm?.id
+                                )[0]
+                              : workerHarm?.length
+                              ? workerHarm[0]
+                              : undefined
                           }
-                        >
-                          <Badge
-                            color="secondary"
-                            variant="dot"
-                            invisible={!!!worker.comment}
-                          >
-                            <NoteAltOutlinedIcon />
-                          </Badge>
-                        </span>
-                        <Checkbox
-                          sx={{
-                            width: "40px",
-                            height: "40px",
-                            marginLeft: "0px",
-                            padding: "0px",
+                          //@ts-ignore
+                          onChange={(event: any, newValue: IHarm) => {
+                            updateWorkerData(worker.id, "harmId", newValue?.id);
                           }}
-                          {...checkboxLabel}
-                          checked={worker.isException}
-                          icon={<ErrorOutlineOutlinedIcon />}
-                          checkedIcon={<ErrorIcon />}
-                          onClick={() => {
-                            updateWorkerData(
-                              worker.id,
-                              "isException",
-                              !worker.isException
-                            );
-                          }}
+                          sx={{ width: 300 }}
                         />
-                      </Stack>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
+                      </td>
+                      <td>{worker?.harm?.harmNum}</td>
+                      <td>
+                        <Stack
+                          direction="row"
+                          spacing={2}
+                          m={0}
+                          sx={{ "span:last-child": { marginLeft: 0 } }}
+                        >
+                          <DatePicker
+                            label="Выберите дату"
+                            value={
+                              moment(worker.lastMed).month() ===
+                                moment().month() &&
+                              moment(worker.lastMed).year() === moment().year()
+                                ? worker.lastMed
+                                : null
+                            }
+                            onChange={(newValue) => {
+                              updateWorkerData(worker.id, "lastMed", newValue);
+                            }}
+                            renderInput={({
+                              inputRef,
+                              inputProps,
+                              InputProps,
+                            }) => (
+                              <Box
+                                sx={{ display: "flex", alignItems: "center" }}
+                                ref={inputRef}
+                              >
+                                {InputProps?.endAdornment}
+                              </Box>
+                            )}
+                          />
+                          <span
+                            className={[styles.expandable, styles.icon].join(
+                              " "
+                            )}
+                            onClick={() =>
+                              setAddWorkerCommentModal({
+                                id: worker.id,
+                                name: worker.name,
+                                comment: worker.comment || "",
+                              })
+                            }
+                          >
+                            <Tooltip title={worker.comment || ""}>
+                              <Badge
+                                color="secondary"
+                                variant="dot"
+                                invisible={!!!worker.comment}
+                              >
+                                <NoteAltOutlinedIcon />
+                              </Badge>
+                            </Tooltip>
+                          </span>
+                          <Checkbox
+                            sx={{
+                              width: "40px",
+                              height: "40px",
+                              marginLeft: "0px",
+                              padding: "0px",
+                            }}
+                            {...checkboxLabel}
+                            checked={worker.isException}
+                            icon={<ErrorOutlineOutlinedIcon />}
+                            checkedIcon={<ErrorIcon />}
+                            onClick={() => {
+                              updateWorkerData(
+                                worker.id,
+                                "isException",
+                                !worker.isException
+                              );
+                            }}
+                          />
+                        </Stack>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          )}
         </table>
       </>
     </div>

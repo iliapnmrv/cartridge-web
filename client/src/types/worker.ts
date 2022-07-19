@@ -3,7 +3,6 @@ export interface IWorker {
   tabNom: string;
   name: string;
   position: string;
-  dateOfBirth: Date;
   shift: string;
   lastMed?: Date;
   isException: boolean;

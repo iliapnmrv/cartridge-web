@@ -21,9 +21,9 @@ export class Worker {
   @Field(() => String)
   position: string;
 
-  @Column()
-  @Field(() => Date)
-  dateOfBirth: Date;
+  // @Column({ nullable: true })
+  // @Field(() => Date, { nullable: true })
+  // dateOfBirth: Date;
 
   @Column({ nullable: true })
   @Field(() => String, { nullable: true })
