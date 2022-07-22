@@ -14,6 +14,10 @@ export type HarmsData = {
   harms: IHarm[];
 };
 
+export type ShiftsData = {
+  shifts: { shift: string }[];
+};
+
 export const AllCartridgesQuery = gql`
   query findAllCartridges {
     cartridge {
@@ -33,8 +37,8 @@ export const AllCartridgesQuery = gql`
 `;
 
 export const AllWorkersQuery = gql`
-  query findAllWorkers {
-    workers {
+  query findAllWorkers($offset: Int, $limit: Int) {
+    workers(offset: $offset, limit: $limit) {
       id
       tabNom
       name
@@ -64,6 +68,14 @@ export const AllHarmsQuery = gql`
   }
 `;
 
+export const AllShiftsQuery = gql`
+  query findAllShifts {
+    shifts {
+      shift
+    }
+  }
+`;
+
 export const SearchCartridgesQuery = gql`
   query searchCartridges($field: String!) {
     searchCartridges(field: $field) {
@@ -78,6 +90,27 @@ export const SearchCartridgesQuery = gql`
         created_at
         type
       }
+    }
+  }
+`;
+
+export const FilterWorkersQuery = gql`
+  query filterWorkers($name: String, $date: DateTime, $shifts: [String!]) {
+    filterWorkers(filters: { name: $name, date: $date, shifts: $shifts }) {
+      id
+      tabNom
+      name
+      position
+      shift
+      lastMed
+      isException
+      harm {
+        id
+        position
+        harm
+        harmNum
+      }
+      comment
     }
   }
 `;

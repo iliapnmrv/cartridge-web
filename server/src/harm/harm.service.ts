@@ -10,7 +10,14 @@ export class HarmService {
     private harmRepository: Repository<Harm>,
   ) {}
 
-  async findAll(): Promise<Harm[]> {
-    return await this.harmRepository.find();
+  async findAllHarms(): Promise<Harm[]> {
+    const harms = await this.harmRepository
+      .createQueryBuilder()
+      .select(['harmNum', 'harm', 'id'])
+      .groupBy('harmNum')
+      .getRawMany();
+    // console.log(harms, harms.length);
+
+    return harms;
   }
 }

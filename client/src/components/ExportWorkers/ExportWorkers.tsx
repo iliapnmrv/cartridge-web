@@ -14,6 +14,7 @@ const ExportWorkers = ({ data }: Props) => {
   return (
     <>
       <Fab
+        sx={{ position: "fixed" }}
         color="primary"
         aria-label="add"
         variant="extended"

@@ -8,6 +8,6 @@ export class HarmResolver {
 
   @Query(() => [Harm])
   harms(): Promise<Harm[]> {
-    return this.harmService.findAll();
+    return this.harmService.findAllHarms();
   }
 }

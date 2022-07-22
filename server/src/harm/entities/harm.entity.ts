@@ -10,7 +10,7 @@ export class Harm {
   id: number;
 
   @Column()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   position: string;
 
   @Column()

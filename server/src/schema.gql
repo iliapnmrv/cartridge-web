@@ -31,7 +31,7 @@ type Cartridge {
 
 type Harm {
   id: Int!
-  position: String!
+  position: String
   harm: String!
   harmNum: String!
   workers: [Worker!]
@@ -54,7 +54,15 @@ type Query {
   findByName(name: String!): Cartridge
   searchCartridges(field: String!): [Cartridge!]!
   harms: [Harm!]!
-  workers: [Worker!]!
+  workers(offset: Int, limit: Int): [Worker!]!
+  shifts: [Worker!]!
+  filterWorkers(filters: FilterWorkersInput): [Worker!]
+}
+
+input FilterWorkersInput {
+  name: String
+  date: DateTime
+  shifts: [String!]
 }
 
 type Mutation {
