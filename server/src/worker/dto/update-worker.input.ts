@@ -6,11 +6,14 @@ export class UpdateWorkerInput {
   id: number;
 
   @Field({ nullable: true })
-  lastMed?: string;
+  lastMed?: Date;
 
   @Field({ nullable: true })
   harmId?: number;
 
   @Field({ nullable: true })
   isException?: boolean;
+
+  @Field({ nullable: true })
+  comment?: string;
 }

@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { IWorker } from "types/worker";
+import { IHarm, IWorker } from "types/worker";
 import { ICartridge } from "../types/cartridge";
 
 export type CartridgesData = {
@@ -8,6 +8,14 @@ export type CartridgesData = {
 
 export type WorkersData = {
   workers: IWorker[];
+};
+
+export type HarmsData = {
+  harms: IHarm[];
+};
+
+export type ShiftsData = {
+  shifts: { shift: string }[];
 };
 
 export const AllCartridgesQuery = gql`
@@ -31,16 +39,60 @@ export const AllCartridgesQuery = gql`
 export const AllWorkersQuery = gql`
   query findAllWorkers {
     workers {
+      id
       tabNom
       name
       position
-      dateOfBirth
       shift
       lastMed
       isException
       harm {
         id
+        position
+        harm
+        harmNum
       }
+      comment
+    }
+  }
+`;
+
+export const FilterWorkersQuery = gql`
+  query filterWorkers($name: String, $date: DateTime, $shifts: [String!]) {
+    filterWorkers(filters: { name: $name, date: $date, shifts: $shifts }) {
+      id
+      tabNom
+      name
+      position
+      shift
+      lastMed
+      isException
+      harm {
+        id
+        position
+        harm
+        harmNum
+      }
+      comment
+    }
+  }
+`;
+
+export const AllHarmsQuery = gql`
+  query findAllHarms {
+    harms {
+      id
+      position
+      harm
+      harmNum
+    }
+  }
+`;
+
+export const AllShiftsQuery = gql`
+  query findAllShifts {
+    shifts {
+      shift
     }
   }
 `;

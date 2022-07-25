@@ -3,6 +3,10 @@ export interface IPeriod {
   label: string;
 }
 
+export const exportFileType =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+export const exportFileExtension = ".xlsx";
+
 export const periods: IPeriod[] = [
   {
     value: 30,
@@ -25,3 +29,5 @@ export const periods: IPeriod[] = [
     label: "Все время",
   },
 ];
+
+export const checkboxLabel = { inputProps: { "aria-label": "Checkbox" } };

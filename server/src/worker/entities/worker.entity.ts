@@ -21,9 +21,9 @@ export class Worker {
   @Field(() => String)
   position: string;
 
-  @Column()
-  @Field(() => Date)
-  dateOfBirth: Date;
+  // @Column({ nullable: true })
+  // @Field(() => Date, { nullable: true })
+  // dateOfBirth: Date;
 
   @Column({ nullable: true })
   @Field(() => String, { nullable: true })
@@ -36,6 +36,10 @@ export class Worker {
   @Column({ default: false })
   @Field(() => Boolean)
   isException: boolean;
+
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  comment: string;
 
   @Column({ nullable: true })
   harmId?: number;

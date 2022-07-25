@@ -7,22 +7,26 @@ type Props = {
   value: string;
   setValue: Dispatch<string>;
   placeholder?: string;
+  search?: Function;
 };
 
-const Search = ({ value, setValue, placeholder }: Props) => {
+const Search = ({ value, setValue, placeholder, search }: Props) => {
   return (
     <TextField
       id="search"
       type="text"
       variant="outlined"
       size="small"
-      value={value}
-      onChange={(e) => {
+      onBlur={(e) => {
         setValue(e.target.value);
       }}
       InputProps={{
         endAdornment: (
-          <SearchOutlinedIcon fontSize="large" className={styles.searchField} />
+          <SearchOutlinedIcon
+            fontSize="large"
+            className={styles.searchField}
+            onClick={search ? () => search() : undefined}
+          />
         ),
       }}
       placeholder={placeholder}
