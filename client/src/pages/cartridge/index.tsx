@@ -1,4 +1,4 @@
-import { gql, useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { ISortConfig, useSortableData } from "hooks/useSortable";
@@ -9,7 +9,6 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import KeyboardControlKeyRoundedIcon from "@mui/icons-material/KeyboardControlKeyRounded";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import {
   Button,
   ButtonGroup,
@@ -62,6 +61,9 @@ export interface IRowsSelected {
 const Home = () => {
   const { data, loading, error, refetch } =
     useQuery<CartridgesData>(AllCartridgesQuery);
+
+  console.log(error);
+
   const [
     updateCartridges,
     { data: updateResponseData, loading: updateLoading, error: updateError },

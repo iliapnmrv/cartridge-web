@@ -29,38 +29,16 @@ type Cartridge {
   logs: [Log!]
 }
 
-type Harm {
-  id: Int!
-  position: String!
-  harm: String!
-  harmNum: String!
-  workers: [Worker!]
-}
-
-type Worker {
-  id: Int!
-  tabNom: String!
-  name: String!
-  position: String!
-  dateOfBirth: DateTime!
-  shift: String
-  lastMed: DateTime
-  isException: Boolean!
-  harm: Harm
-}
-
 type Query {
   cartridge: [Cartridge!]!
   findByName(name: String!): Cartridge
   searchCartridges(field: String!): [Cartridge!]!
-  workers: [Worker!]!
 }
 
 type Mutation {
   createCartridge(createCartridgeInput: CreateCartridgeInput!): Cartridge!
   updateCartridge(updateCartridgeInput: UpdateCartridgeInput!): Cartridge!
   removeCartridge(id: Int!): String!
-  updateWorker(updateWorkerInput: UpdateWorkerInput!): Worker!
 }
 
 input CreateCartridgeInput {
@@ -76,11 +54,4 @@ input UpdateCartridgeInput {
   description: String
   amount: Float
   type: CartridgeAction
-}
-
-input UpdateWorkerInput {
-  id: Float!
-  lastMed: String
-  harmId: Float
-  isException: Boolean
 }
