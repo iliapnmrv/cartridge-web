@@ -1,4 +1,5 @@
 import { Skeleton } from "@mui/material";
+import TableHead from "components/Table/TableHead";
 import React from "react";
 
 type Props = {};
@@ -6,20 +7,7 @@ type Props = {};
 const MedLoading = (props: Props) => {
   return (
     <table>
-      <thead>
-        <tr>
-          <th>Табельный номер</th>
-          <th>ФИО</th>
-          <th>Должность</th>
-          <th>Дата последнего прохождения</th>
-          <th>Количество дней</th>
-          <th>Предполагаемая дата прохождения</th>
-          <th align="right">№ смены</th>
-          <th>Вредные и (или) опасные производственные факторы и виды работ</th>
-          <th>№ пукнта</th>
-          <th>Действия</th>
-        </tr>
-      </thead>
+      <TableHead />
       <tbody>
         {[...Array(5)].map((_, index) => (
           <tr key={index}>

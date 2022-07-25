@@ -3,6 +3,7 @@ import { IHarm, IWorker } from "types/worker";
 
 interface MedState {
   workers: IWorker[];
+  workersInitial: IWorker[];
   harms: IHarm[];
   shifts: string[];
   shiftsAvailable: string[];
@@ -13,6 +14,7 @@ interface MedState {
 
 const initialState: MedState = {
   workers: [],
+  workersInitial: [],
   harms: [],
   shifts: [],
   shiftsAvailable: [],
@@ -27,6 +29,12 @@ export const medSlice = createSlice({
   reducers: {
     setShifts: (state: MedState, action: PayloadAction<string[]>) => {
       state.shifts = action.payload;
+    },
+    setWorkers: (state: MedState, action: PayloadAction<IWorker[]>) => {
+      state.workers = action.payload;
+    },
+    setWorkersInitial: (state: MedState, action: PayloadAction<IWorker[]>) => {
+      state.workersInitial = action.payload;
     },
     setHarms: (state: MedState, action: PayloadAction<IHarm[]>) => {
       state.harms = action.payload;
@@ -52,6 +60,8 @@ export const {
   setDateFilter,
   setDateFilterCancel,
   setHarms,
+  setWorkers,
+  setWorkersInitial,
 } = medSlice.actions;
 
 export default medSlice.reducer;

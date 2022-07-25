@@ -37,8 +37,29 @@ export const AllCartridgesQuery = gql`
 `;
 
 export const AllWorkersQuery = gql`
-  query findAllWorkers($offset: Int, $limit: Int) {
-    workers(offset: $offset, limit: $limit) {
+  query findAllWorkers {
+    workers {
+      id
+      tabNom
+      name
+      position
+      shift
+      lastMed
+      isException
+      harm {
+        id
+        position
+        harm
+        harmNum
+      }
+      comment
+    }
+  }
+`;
+
+export const FilterWorkersQuery = gql`
+  query filterWorkers($name: String, $date: DateTime, $shifts: [String!]) {
+    filterWorkers(filters: { name: $name, date: $date, shifts: $shifts }) {
       id
       tabNom
       name
@@ -90,27 +111,6 @@ export const SearchCartridgesQuery = gql`
         created_at
         type
       }
-    }
-  }
-`;
-
-export const FilterWorkersQuery = gql`
-  query filterWorkers($name: String, $date: DateTime, $shifts: [String!]) {
-    filterWorkers(filters: { name: $name, date: $date, shifts: $shifts }) {
-      id
-      tabNom
-      name
-      position
-      shift
-      lastMed
-      isException
-      harm {
-        id
-        position
-        harm
-        harmNum
-      }
-      comment
     }
   }
 `;

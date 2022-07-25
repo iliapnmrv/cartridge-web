@@ -1,15 +1,4 @@
-import {
-  Autocomplete,
-  Checkbox,
-  FormControl,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, Checkbox, FormControl, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useAppDispatch, useAppSelector } from "hooks/redux";
 import React, { useEffect } from "react";
@@ -40,15 +29,12 @@ const MedFilters = ({ workers }: Props) => {
     dispatch(setShifts(value));
   };
 
-  console.log("shiftsAvailable", shiftsAvailable);
-  console.log("shifts", shifts);
-
   const handleDateFilterChange = (newValue: Date | null) => {
     dispatch(setDateFilter(newValue));
   };
 
   useEffect(() => {
-    dateFilter ? setDateFilterCancel(null) : null;
+    dateFilter ? dispatch(setDateFilterCancel(null)) : null;
   }, [dateFilter]);
 
   return (
@@ -93,8 +79,8 @@ const MedFilters = ({ workers }: Props) => {
       >
         <Checkbox
           onClick={() => {
-            setDateFilterCancel(dateFilter ? dateFilter : null);
-            setDateFilter(dateFilter ? null : dateFilterCancel);
+            dispatch(setDateFilterCancel(dateFilter ? dateFilter : null));
+            dispatch(setDateFilter(dateFilter ? null : dateFilterCancel));
           }}
           checked={!!dateFilterCancel}
           {...checkboxLabel}

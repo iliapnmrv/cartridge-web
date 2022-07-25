@@ -49,6 +49,7 @@ thead .descending::after {
 td,
 th {
     padding: 5px 4px;
+    overflow-wrap: break-word;
 }
 
 td {
@@ -62,7 +63,7 @@ tr {
 thead {
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
 }
 
 th {
